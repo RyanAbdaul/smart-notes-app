@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    
+    <!-- Set Flyway logging to DEBUG to see migration details -->
+    <logger name="org.flywaydb" level="DEBUG"/>
+    <logger name="org.springframework.boot.autoconfigure.flyway" level="DEBUG"/>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
