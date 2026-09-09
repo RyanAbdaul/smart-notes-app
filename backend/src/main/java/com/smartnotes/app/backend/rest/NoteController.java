@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,46 +22,60 @@ public class NoteController {
     private final NoteService noteService;
 
     @PostMapping
-    @Operation(summary = "Create a new note", description = "Creates a new note with title and description")
-    public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request) {
-        NoteResponse response = noteService.createNote(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Create a new note",
+            description = "Creates a new note with title and description. The note will be associated with the authenticated user."
+    )
+    public NoteResponse createNote(@Valid @RequestBody NoteRequest request) {
+        return noteService.createNote(request);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get note by ID", description = "Retrieves a single note by its unique identifier")
-    public ResponseEntity<NoteResponse> getNoteById(@PathVariable UUID id) {
-        NoteResponse response = noteService.getNoteById(id);
-        return ResponseEntity.ok(response);
+    @Operation(
+            summary = "Get note by ID",
+            description = "Retrieves a single note by its unique identifier. Only returns the note if it belongs to the authenticated user."
+    )
+    public NoteResponse getNoteById(@PathVariable UUID id) {
+        return noteService.getNoteById(id);
     }
 
     @GetMapping
-    @Operation(summary = "Get all notes", description = "Retrieves a list of all notes in the system")
-    public ResponseEntity<List<NoteResponse>> getAllNotes() {
-        List<NoteResponse> notes = noteService.getAllNotes();
-        return ResponseEntity.ok(notes);
+    @Operation(
+            summary = "Get all notes",
+            description = "Retrieves a list of all notes belonging to the authenticated user"
+    )
+    public List<NoteResponse> getAllNotes() {
+        return noteService.getAllNotes();
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update a note", description = "Updates an existing note's title and description")
-    public ResponseEntity<NoteResponse> updateNote(
+    @Operation(
+            summary = "Update a note",
+            description = "Updates an existing note's title and description. Only the note owner can update it."
+    )
+    public NoteResponse updateNote(
             @PathVariable UUID id,
             @Valid @RequestBody NoteRequest request) {
-        NoteResponse response = noteService.updateNote(id, request);
-        return ResponseEntity.ok(response);
+        return noteService.updateNote(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a note", description = "Permanently deletes a note from the system")
-    public ResponseEntity<Void> deleteNote(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Delete a note",
+            description = "Permanently deletes a note from the system. Only the note owner can delete it."
+    )
+    public void deleteNote(@PathVariable UUID id) {
         noteService.deleteNote(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/count")
-    @Operation(summary = "Count total notes", description = "Returns the total number of notes in the system")
-    public ResponseEntity<Long> countNotes() {
-        long count = noteService.countNotes();
-        return ResponseEntity.ok(count);
+    @Operation(
+            summary = "Count total notes",
+            description = "Returns the total number of notes belonging to the authenticated user"
+    )
+    public long countNotes() {
+        return noteService.countNotes();
     }
 }

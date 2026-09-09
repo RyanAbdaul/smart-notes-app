@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,11 @@ public class Note {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User owner;
 
     // @ElementCollection
     // @CollectionTable(name = "note_tags", joinColumns = @JoinColumn(name = "note_id"))
