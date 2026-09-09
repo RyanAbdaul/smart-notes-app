@@ -21,13 +21,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8080:8080'
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
       - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/smartnotes'
       - 'SPRING_DATASOURCE_USERNAME=root'
       - 'SPRING_DATASOURCE_PASSWORD='
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - smartnotes-network
 

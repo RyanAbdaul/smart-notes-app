@@ -5,6 +5,6 @@ import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.response.LoginResponse;
 
 public interface AuthenticationService {
-    void register(RegisterRequest input) throws Exception;
-    LoginResponse login(AuthenticationRequest input) throws Exception;
+    void register(RegisterRequest input);
+    LoginResponse login(AuthenticationRequest input);
 }

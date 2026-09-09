@@ -25,7 +25,7 @@ public class AuthenticationController {
             summary = "Register a new user",
             description = "Creates a new user account with email, password, and personal information. First user gets ADMIN role, subsequent users get USER role."
     )
-    public void register(@Valid @RequestBody RegisterRequest request) throws Exception {
+    public void register(@Valid @RequestBody RegisterRequest request) {
         authenticationService.register(request);
     }
 
@@ -34,7 +34,7 @@ public class AuthenticationController {
             summary = "Login user",
             description = "Authenticates a user with email and password, returns a JWT token for subsequent API requests"
     )
-    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request) throws Exception {
+    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request) {
         return authenticationService.login(request);
     }
 }
