@@ -1,4 +1,7 @@
 services:
+  # If you ever see "role does not exist" errors, run:
+  #   docker compose down -v
+  # This resets the Postgres data volume so env vars re-apply.
   postgres:
     image: 'postgres:latest'
     environment:

@@ -56,11 +56,16 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
+        return generateToken(claims, userDetails, JWT_EXPIRATION);
+    }
+
+    @Override
+    public String generateToken(Map<String, Object> claims, UserDetails userDetails, long expiration) {
         return Jwts.builder()
                 .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }

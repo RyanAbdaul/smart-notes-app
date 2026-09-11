@@ -3,6 +3,7 @@ package com.smartnotes.app.backend.config;
 import com.smartnotes.app.backend.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,15 +18,21 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserRepository userRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final Environment environment;
 
-    public SecurityConfig(UserRepository userRepository, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserRepository userRepository, 
+                          JwtAuthenticationFilter jwtAuthenticationFilter,
+                          Environment environment) {
         this.userRepository = userRepository;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.environment = environment;
     }
 
     @Bean
@@ -56,20 +63,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer ->
-                configurer
-                        .requestMatchers(
-                                "/api/auth/login",
-                                "/api/auth/register",
-                                "/api/docs",
-                                "/swagger-ui/**", 
-                                "/v3/api-docs/**", 
-                                "/swagger-resource/**", 
-                                "/webjars/**"
-                        ).permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-        );
+        boolean isDev = Arrays.asList(environment.getActiveProfiles()).contains("dev");
+
+        http.authorizeHttpRequests(configurer -> {
+            configurer.requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/register",
+                    "/api/docs",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resource/**",
+                    "/webjars/**"
+            ).permitAll();
+            if (isDev) {
+                configurer.requestMatchers("/api/dev/token").permitAll();
+            }
+            configurer.requestMatchers("/api/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated();
+        });
         http.csrf(csrf -> csrf.disable());
         http.exceptionHandling(exceptionHandling -> 
                 exceptionHandling.authenticationEntryPoint(authenticationEntryPoint()));
