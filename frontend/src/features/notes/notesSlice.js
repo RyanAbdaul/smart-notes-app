@@ -1,0 +1,34 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { getAllNotes, getToDos } from "./notesService";
+const initialState = {
+  data: [],
+  toDos:[],
+  activeNoteId: null,
+  activeTodoes:null,
+  isLoading: false,
+  error: null,
+};
+export const notesSlice = createSlice({
+  name: "note",
+  initialState,
+  extraReducers: (builder) => {
+    builder.addCase(getAllNotes.fulfilled, (state, action) => {
+      state.data = action.payload;
+      if (action.payload.length > 0 && !state.activeNoteId) {
+        state.activeNoteId = action.payload[0].id;
+      }
+    }).addCase(getToDos.fulfilled,(state,action)=>{
+      state.toDos=action.payload
+    });
+  },
+  reducers: {
+    setActiveNote: (state, action) => {
+      state.activeNoteId = action.payload;
+    },
+    setToDos: (state, action) => {
+      state.activeTodoes = action.payload;
+    },
+  },
+});
+export const noteReducer = notesSlice.reducer;
+export const {setActiveNote}=notesSlice.actions
