@@ -9,6 +9,13 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Insert a default user so existing notes (from V2) can be assigned to it
+INSERT INTO users (id, first_name, last_name, email, password)
+VALUES (1, 'System', 'User', 'system@smartnotes.local', 'system_password_not_used');
+
+-- Synchronize the sequence
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+
 -- Create user_authority table for storing user roles
 CREATE TABLE user_authority (
     user_id BIGINT NOT NULL,

@@ -2,6 +2,8 @@ package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Authority;
 import com.smartnotes.app.backend.entity.User;
+import com.smartnotes.app.backend.exception.EmailAlreadyExistsException;
+import com.smartnotes.app.backend.exception.UserNotFoundException;
 import com.smartnotes.app.backend.repository.UserRepository;
 import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
@@ -28,9 +30,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public void register(RegisterRequest input) throws Exception {
+    public void register(RegisterRequest input) {
         if (isEmailTaken(input.getEmail())) {
-            throw new Exception("Email is already taken");
+            throw new EmailAlreadyExistsException("Email is already taken");
         }
 
         User user = buildNewUser(input);
@@ -43,7 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword()));
         User user = userRepository.findUserByEmail(input.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         String token = jwtService.generateToken(new HashMap<>(), user);
         
         // Get user's primary role (first authority)
