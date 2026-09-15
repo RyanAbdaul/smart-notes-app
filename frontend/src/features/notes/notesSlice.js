@@ -23,9 +23,7 @@ export const notesSlice = createSlice({
     setActiveNote: (state, action) => {
       state.activeNoteId = action.payload;
     },
-    setToDos: (state, action) => {
-      state.activeTodoes = action.payload;
-    },
+  
   },
 });
 export const noteReducer = notesSlice.reducer;
