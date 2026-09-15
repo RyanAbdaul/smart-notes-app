@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -35,10 +36,14 @@ public class Note {
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
-    // @ElementCollection
-    // @CollectionTable(name = "note_tags", joinColumns = @JoinColumn(name = "note_id"))
-    // @Column(name = "tag")
-    // private List<String> tags;
+    @ManyToMany
+    @JoinTable(
+            name = "note_tags",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags;
+
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
