@@ -3,13 +3,11 @@ import {  useSelector } from "react-redux";
 import CheckBox from "../common/CheckBox";
 
 const NoteEditor = () => {
-  const { data, activeNoteId, toDos } = useSelector((state) => state.notes);
+  const { data, activeNoteId } = useSelector((state) => state.notes);
   const currentNote = data.find((ele) => ele.id === activeNoteId);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const currentUserTodos = toDos.filter(
-    (ele) => ele.userId === currentNote?.userId,
-  );
+
   useEffect(() => {
     if (currentNote) {
       setTitle(currentNote.title || "");
@@ -37,9 +35,7 @@ const NoteEditor = () => {
         onChange={(e) => setBody(e.target.value)}
         placeholder="Details"
       />
-      {currentUserTodos.map((todo) => (
-        <CheckBox toDo={todo} key={todo.id}/>
-      ))}
+        <CheckBox  />
     </section>
   );
 };

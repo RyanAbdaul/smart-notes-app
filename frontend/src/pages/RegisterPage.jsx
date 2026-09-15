@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Inputs from "../components/common/Inputs";
-
+import { userRegister } from "../features/auth/authService";
+import { useDispatch, useSelector } from "react-redux";
 const RegisterPage = () => {
+  const dispatch = useDispatch();
+  const { user, error, status, isAuthenticated, token } = useSelector(
+    (state) => state.auth,
+  );
+const isLoading = status === "loading";
   const [formData, setFormData] = useState({
-    fName: "",
-    lName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
-
+  
+  console.log(user, error, status, isAuthenticated, token);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((currentData) => ({ ...currentData, [name]: value }));
@@ -17,14 +24,18 @@ const RegisterPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    dispatch(userRegister(formData));
   };
-
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F6F3F5] px-4 py-10">
       <section className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl shadow-zinc-200/70 sm:p-10">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-zinc-800">Create your account</h1>
-          <p className="mt-2 text-zinc-500">Start organizing your notes in one place.</p>
+          <h1 className="text-3xl font-bold text-zinc-800">
+            Create your account
+          </h1>
+          <p className="mt-2 text-zinc-500">
+            Start organizing your notes in one place.
+          </p>
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
@@ -32,16 +43,16 @@ const RegisterPage = () => {
             label="First name"
             id="fName"
             type="text"
-            name="fName"
-            value={formData.fName}
+            name="firstName"
+            value={formData.firstName}
             onChange={handleChange}
           />
           <Inputs
             label="Last name"
             id="lName"
             type="text"
-            name="lName"
-            value={formData.lName}
+            name="lastName"
+            value={formData.lastName}
             onChange={handleChange}
           />
           <Inputs
@@ -60,18 +71,22 @@ const RegisterPage = () => {
             value={formData.password}
             onChange={handleChange}
           />
-
+          {error && <span>{error}</span>}
           <button
             type="submit"
-            className="w-full rounded-xl bg-amber-600 px-4 py-3 font-semibold text-white transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-200"
+            className={`w-full rounded-xl bg-amber-600 px-4 py-3 font-semibold text-white transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-200 ${isLoading ? "cursor-not-allowed" : ""}`}
+            disabled={isLoading}
           >
-            Create account
+            {isLoading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-zinc-500">
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-amber-700 hover:text-amber-800">
+          <Link
+            to="/login"
+            className="font-semibold text-amber-700 hover:text-amber-800"
+          >
             Sign in
           </Link>
         </p>

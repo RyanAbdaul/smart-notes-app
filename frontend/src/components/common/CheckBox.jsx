@@ -1,4 +1,3 @@
-
 const CheckBox = ({ toDo }) => {
   //   const [toDos, setTodo] = useState([{ value: null, complete: false }]);
 
@@ -8,16 +7,16 @@ const CheckBox = ({ toDo }) => {
         className="scale-150 m-2 "
         type="checkbox"
         id=""
-        checked={toDo.completed}
-readOnly
+        checked={toDo?.completed}
+        readOnly
         // onChange={(e) => setTodo([{ complete: e.target.checked }])}
       />
       <textarea
         className={` w-full outline-hidden resize-none overflow-hidden  text-lg`}
         name="toDos"
         id="toDosLabal"
-        value={toDo.title}
-    readOnly
+        value={toDo?.title}
+        readOnly
         // onChange={(e) => setTodo([{ value: e.target.value }])}
       />
     </div>

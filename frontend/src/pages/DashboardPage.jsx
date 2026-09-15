@@ -7,12 +7,11 @@ import ListView from "../components/layout/ListView";
 import NoteDetail from "../components/layout/NoteDetail";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getAllNotes, getToDos } from "../features/notes/notesService";
+import { getAllNotes } from "../features/notes/notesService";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getToDos());
     dispatch(getAllNotes());
   }, [dispatch]);
 
