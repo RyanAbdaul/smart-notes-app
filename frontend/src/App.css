@@ -1,4 +1,8 @@
 @import "tailwindcss";
-body{
-  background-color:  #F6F3F5;
+.dashboard{
+  /* background-color:  #F6F3F5; */
+background:url("../src/assets/FSjLmBMXMAA_NpG.jfif") left  no-repeat;
+background-size: cover;
+backdrop-filter: blur(7px);
+width: 100%;
 }
