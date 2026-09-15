@@ -24,11 +24,9 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotEmpty
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
-    @JsonIgnore
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.EAGER)
     private List<Note> notes;
 
 }

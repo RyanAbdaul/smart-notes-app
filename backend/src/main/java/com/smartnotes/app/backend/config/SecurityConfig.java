@@ -67,18 +67,18 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(configurer -> {
             configurer.requestMatchers(
-                    "/api/auth/login",
-                    "/api/auth/register",
-                    "/api/docs",
+                    "/auth/login",
+                    "/auth/register",
+                    "/docs",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/swagger-resource/**",
                     "/webjars/**"
             ).permitAll();
             if (isDev) {
-                configurer.requestMatchers("/api/dev/token").permitAll();
+                configurer.requestMatchers("/dev/token").permitAll();
             }
-            configurer.requestMatchers("/api/admin/**").hasRole("ADMIN")
+            configurer.requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated();
         });
         http.csrf(csrf -> csrf.disable());

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/dev")
+@RequestMapping("/dev")
 @Profile("dev")
 @AllArgsConstructor
 @Tag(name = "Development", description = "Development-only utilities")

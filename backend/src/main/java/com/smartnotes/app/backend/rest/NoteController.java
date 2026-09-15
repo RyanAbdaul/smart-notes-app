@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 @RequiredArgsConstructor
 @Tag(name = "Notes", description = "Note management API - Create, read, update and delete notes")
 public class NoteController {

@@ -2,6 +2,8 @@ package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Tag;
 import com.smartnotes.app.backend.repository.TagRepository;
+import com.smartnotes.app.backend.request.TagRequest;
+import com.smartnotes.app.backend.response.TagResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,23 +16,24 @@ import java.util.UUID;
 public class TagService {
     private final TagRepository tagRepository;
 
-    public Tag create(Tag tag) {
-        return tagRepository.save(tag);
+    public TagResponse create(TagRequest request) {
+        Tag tag = new Tag();
+        tag.setName(request.getName());
+        return toResponse(tagRepository.save(tag));
+    }
+    public List<TagResponse> getAll() {
+        return tagRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+    public TagResponse getById(UUID id) {
+        return toResponse(findEntity(id));
     }
 
-    public List<Tag> getAll() {
-        return (List<Tag>) tagRepository.findAll();
-    }
-
-    public Tag getById(UUID id) {
-        return tagRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tag not found: " + id));
-    }
-
-    public Tag update(UUID id, Tag updated) {
-        Tag existing = getById(id);
-        existing.setName(updated.getName());
-        return tagRepository.save(existing);
+    public TagResponse update(UUID id, TagRequest request) {
+        Tag existing = findEntity(id);
+        existing.setName(request.getName());
+        return toResponse(tagRepository.save(existing));
     }
 
     public long tagsCount() {
@@ -39,5 +42,14 @@ public class TagService {
 
     public void delete(UUID id) {
         tagRepository.deleteById(id);
+    }
+
+    private Tag findEntity(UUID id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tag not found: " + id));
+    }
+
+    private TagResponse toResponse(Tag tag) {
+        return new TagResponse(tag.getId(), tag.getName(), tag.getNotes());
     }
 }
