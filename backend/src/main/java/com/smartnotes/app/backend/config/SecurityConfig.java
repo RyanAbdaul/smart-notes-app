@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final Environment environment;
 
-    public SecurityConfig(UserRepository userRepository, 
+    public SecurityConfig(UserRepository userRepository,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
                           Environment environment) {
         this.userRepository = userRepository;
@@ -82,9 +82,9 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
         });
         http.csrf(csrf -> csrf.disable());
-        http.exceptionHandling(exceptionHandling -> 
+        http.exceptionHandling(exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(authenticationEntryPoint()));
-        http.sessionManagement(session -> 
+        http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
