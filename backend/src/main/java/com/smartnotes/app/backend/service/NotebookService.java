@@ -49,7 +49,7 @@ public class NotebookService {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
                 .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
-        if (notebook.getOwner().getId() != currentUser.getId()) {
+        if (!notebook.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNotebookAccessException("You don't have permission to access this notebook");
         }
         return mapToResponse(notebook);
@@ -59,7 +59,7 @@ public class NotebookService {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
                 .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
-        if (notebook.getOwner().getId() != currentUser.getId()) {
+        if (!notebook.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNotebookAccessException("You don't have permission to update this notebook");
         }
         notebook.setName(request.getName());
@@ -71,7 +71,7 @@ public class NotebookService {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
                 .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
-        if (notebook.getOwner().getId() != currentUser.getId()) {
+        if (!notebook.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNotebookAccessException("You don't have permission to delete this notebook");
         }
         notebookRepository.deleteById(id);
@@ -87,9 +87,10 @@ public class NotebookService {
         Notebook notebook = notebookRepository.findById(notebookId)
                 .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + notebookId));
 
-        if (notebook.getOwner().getId() != currentUser.getId()) {
+        if (!notebook.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNotebookAccessException("You don't have permission to add notes to this notebook");
         }
+
 
         Note note = new Note();
         note.setTitle(request.getTitle());
