@@ -14,40 +14,27 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "notes")
+@Table(name = "notebooks")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Note {
+public class Notebook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    private String name;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notebook_id")
-    private Notebook notebook;
-
-    @ManyToMany
-    @JoinTable(
-            name = "note_tags",
-            joinColumns = @JoinColumn(name = "note_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags;
-
+    @OneToMany(mappedBy = "notebook", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Note> notes;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

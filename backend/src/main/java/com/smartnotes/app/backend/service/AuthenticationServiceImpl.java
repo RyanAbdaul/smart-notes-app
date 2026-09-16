@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -61,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private User buildNewUser(RegisterRequest input) {
         User user = new User();
-        user.setId(0);
+        user.setId(UUID.randomUUID());
         user.setFirstName(input.getFirstName());
         user.setLastName(input.getLastName());
         user.setEmail(input.getEmail());
