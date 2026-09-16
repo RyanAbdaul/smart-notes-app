@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -99,7 +100,7 @@ public class DataSeeder {
 
     private User createFakeUser() {
         User user = new User();
-        user.setId(0);
+        user.setId(UUID.randomUUID());
         user.setFirstName("Demo");
         user.setLastName("User");
         user.setEmail("demo@smartnotes.com");
