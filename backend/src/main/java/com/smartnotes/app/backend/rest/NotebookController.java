@@ -1,7 +1,10 @@
 package com.smartnotes.app.backend.rest;
 
+import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.NotebookRequest;
+import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.response.NotebookResponse;
+import com.smartnotes.app.backend.service.NotebookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,6 +31,18 @@ public class NotebookController {
     )
     public NotebookResponse createNotebook(@Valid @RequestBody NotebookRequest request) {
         return notebookService.createNotebook(request);
+    }
+
+    @PostMapping("/{notebookId}/notes")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Create a note in a notebook",
+            description = "Creates a new note assigned to a specific notebook. Only the notebook owner can add notes to it."
+    )
+    public NoteResponse createNoteInNotebook(
+            @PathVariable UUID notebookId,
+            @Valid @RequestBody NoteRequest request) {
+        return notebookService.createNoteInNotebook(notebookId, request);
     }
 
     @GetMapping("/{id}")

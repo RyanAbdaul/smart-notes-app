@@ -1,12 +1,16 @@
 package com.smartnotes.app.backend.service;
 
+import com.smartnotes.app.backend.entity.Note;
 import com.smartnotes.app.backend.entity.Notebook;
 import com.smartnotes.app.backend.entity.User;
 import com.smartnotes.app.backend.exception.NotebookNotFoundException;
 import com.smartnotes.app.backend.exception.UnauthorizedNotebookAccessException;
 import com.smartnotes.app.backend.exception.UserNotAuthenticatedException;
-import com.smartnotes.app.backend.request.NotebookRequest;
+import com.smartnotes.app.backend.repository.NoteRepository;
 import com.smartnotes.app.backend.repository.NotebookRepository;
+import com.smartnotes.app.backend.request.NoteRequest;
+import com.smartnotes.app.backend.request.NotebookRequest;
+import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.response.NotebookResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class NotebookService {
 
     private final NotebookRepository notebookRepository;
+    private final NoteRepository noteRepository;
 
     public List<NotebookResponse> getAllNotebooks() {
         User currentUser = getCurrentUser();
@@ -75,6 +80,27 @@ public class NotebookService {
     public long countNotebooks() {
         User currentUser = getCurrentUser();
         return notebookRepository.countByOwnerId(currentUser.getId());
+    }
+
+    public NoteResponse createNoteInNotebook(UUID notebookId, NoteRequest request) {
+        User currentUser = getCurrentUser();
+        Notebook notebook = notebookRepository.findById(notebookId)
+                .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + notebookId));
+
+        if (notebook.getOwner().getId() != currentUser.getId()) {
+            throw new UnauthorizedNotebookAccessException("You don't have permission to add notes to this notebook");
+        }
+
+        Note note = new Note();
+        note.setTitle(request.getTitle());
+        note.setDescription(request.getDescription());
+        note.setOwner(currentUser);
+        note.setNotebook(notebook);
+
+        Note savedNote = noteRepository.save(note);
+        notebook.getNotes().add(savedNote);
+
+        return mapNoteToResponse(savedNote);
     }
 
     private NotebookResponse mapToResponse(Notebook notebook) {
