@@ -50,7 +50,6 @@ const dispatch=useDispatch()
         <FaArrowDown />
       </button>
       <Sidebar
-        options={["login", "register"]}
         hidden={!isOpen}
         setIsOpen={setIsOpen}
       />

@@ -5,18 +5,16 @@ import { userRegister } from "../features/auth/authService";
 import { useDispatch, useSelector } from "react-redux";
 const RegisterPage = () => {
   const dispatch = useDispatch();
-  const { user, error, status, isAuthenticated, token } = useSelector(
-    (state) => state.auth,
-  );
-const isLoading = status === "loading";
+  const { error, status } = useSelector((state) => state.auth);
+  const isLoading = status === "loading";
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
-  
-  console.log(user, error, status, isAuthenticated, token);
+
+  console.log( error, status);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((currentData) => ({ ...currentData, [name]: value }));

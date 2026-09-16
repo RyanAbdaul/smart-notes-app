@@ -1,6 +1,9 @@
+import { useDispatch } from "react-redux";
 import { Link } from "react-router";
+import { logout } from "../../features/auth/authSlice";
 
-const Sidebar = ({ options, hidden, setIsOpen }) => {
+const Sidebar = ({  hidden, setIsOpen }) => {
+  const dispatch=useDispatch()
   return (
     // حاوية عامة تتحكم في ظهور الخلفية المعتمة
     <div
@@ -24,15 +27,12 @@ const Sidebar = ({ options, hidden, setIsOpen }) => {
         </button>
 
         <div className="flex flex-col gap-2 p-4">
-          {options.map((opt, index) => (
-            <Link
-              key={index}
-              className="block w-full h-full p-4 text-xl hover:bg-amber-700 rounded-lg cursor-pointer transition-colors"
-              to={`/${opt}`}
-            >
-              {opt}
-            </Link>
-          ))}
+            <button
+              className="block text-start w-full h-full p-4 text-xl hover:bg-amber-700 rounded-lg cursor-pointer transition-colors"
+            onClick={()=>dispatch(logout())}
+           >
+              logout
+            </button>
         </div>
       </div>
     </div>
