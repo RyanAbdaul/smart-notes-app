@@ -59,6 +59,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notebook> notebooks;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
