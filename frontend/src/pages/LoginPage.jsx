@@ -1,18 +1,31 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Inputs from "../components/common/Inputs";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../features/auth/authService";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-
+  const { error, status } = useSelector((state) => state.auth);
+  const navigate=useNavigate()
+  const isLoading = status === "loading";
+  const dispatch=useDispatch()
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((currentData) => ({ ...currentData, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-  };
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  try {
+    await dispatch(userLogin(formData)).unwrap();
+
+    navigate("/dashboard");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F6F3F5] px-4 py-10">
@@ -39,12 +52,14 @@ const LoginPage = () => {
             value={formData.password}
             onChange={handleChange}
           />
+            {error && <span>{error}</span>}
 
           <button
             type="submit"
             className="w-full rounded-xl bg-amber-600 px-4 py-3 font-semibold text-white transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-200"
+           disabled={isLoading}
           >
-            Sign in
+            {isLoading ? "Loading..." : "Sign in"}
           </button>
         </form>
 

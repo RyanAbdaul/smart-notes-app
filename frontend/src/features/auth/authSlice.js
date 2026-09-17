@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userRegister } from "./authService";
+import { userLogin, userRegister } from "./authService";
 const initialState = {
-  user: null,
   error: null,
   status: "idle",
-  isAuthenticated: false,
-  token: null,
+  token: localStorage.getItem("token"),
 };
 const authSlice = createSlice({
   name: "auth",
@@ -17,17 +15,39 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(userRegister.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
         state.error = null;
         state.status = "succeeded";
-        state.isAuthenticated = true;
       })
       .addCase(userRegister.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-        state.isAuthenticated = false;
+      })
+      // Login Reducer
+      .addCase(userLogin.pending, (state, action) => {
+        state.error = null;
+        state.status = "loading";
+      })
+      .addCase(userLogin.fulfilled, (state, action) => {
+        state.error = null;
+        state.status = "succeeded";
+        state.token = action.payload.token;
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(userLogin.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
+        state.status = "failed";
       });
+  
   },
+    reducers: {
+      logout: (state) => {
+        state.token = null;
+        state.error = null;
+        state.status = "idle";
+
+        localStorage.removeItem("token");
+      }
+    }
 });
+export const { logout } = authSlice.actions;
 export const authReducer = authSlice.reducer;

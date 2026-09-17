@@ -6,14 +6,20 @@ import Header from "../components/layout/Header";
 import ListView from "../components/layout/ListView";
 import NoteDetail from "../components/layout/NoteDetail";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllNotes } from "../features/notes/notesService";
 
 const DashboardPage = () => {
+  const token = useSelector((state) => state.auth.token);
+
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllNotes());
-  }, [dispatch]);
+    if(token){
+
+      dispatch(getAllNotes());
+      
+    }
+  }, [dispatch,token]);
 
   return (
     <>
