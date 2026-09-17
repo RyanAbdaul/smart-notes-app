@@ -39,8 +39,8 @@ public class NoteService {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
-        
-        if (note.getOwner().getId() != currentUser.getId()) {
+
+        if (!note.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNoteAccessException("You don't have permission to access this note");
         }
         
@@ -50,7 +50,7 @@ public class NoteService {
     public List<NoteResponse> getAllNotes() {
         User currentUser = getCurrentUser();
         return StreamSupport.stream(noteRepository.findAll().spliterator(), false)
-                .filter(note -> note.getOwner().getId() == currentUser.getId())
+                .filter(note -> note.getOwner().getId().equals(currentUser.getId()))
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -59,8 +59,8 @@ public class NoteService {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
-        
-        if (note.getOwner().getId() != currentUser.getId()) {
+
+        if (!note.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNoteAccessException("You don't have permission to update this note");
         }
         
@@ -75,8 +75,8 @@ public class NoteService {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
-        
-        if (note.getOwner().getId() != currentUser.getId()) {
+
+        if (!note.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedNoteAccessException("You don't have permission to delete this note");
         }
         

@@ -46,7 +46,9 @@ public class NoteController {
             description = "Retrieves a list of all notes belonging to the authenticated user"
     )
     public List<NoteResponse> getAllNotes() {
-        return noteService.getAllNotes();
+        List<NoteResponse> notes = noteService.getAllNotes();
+        System.out.println(notes);
+        return notes;
     }
 
     @PatchMapping("/{id}")
