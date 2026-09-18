@@ -38,10 +38,10 @@ public class NoteService {
     public NoteResponse getNoteById(UUID id) {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
+                .orElseThrow(() -> new NoteNotFoundException(id));
 
         if (!note.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNoteAccessException("You don't have permission to access this note");
+            throw new UnauthorizedNoteAccessException(id, currentUser.getId());
         }
         
         return mapToResponse(note);
@@ -58,10 +58,10 @@ public class NoteService {
     public NoteResponse updateNote(UUID id, NoteRequest request) {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
+                .orElseThrow(() -> new NoteNotFoundException(id));
 
         if (!note.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNoteAccessException("You don't have permission to update this note");
+            throw new UnauthorizedNoteAccessException(id, currentUser.getId());
         }
         
         note.setTitle(request.getTitle());
@@ -74,19 +74,19 @@ public class NoteService {
     public void deleteNote(UUID id) {
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new NoteNotFoundException("Note not found with id: " + id));
+                .orElseThrow(() -> new NoteNotFoundException(id));
 
         if (!note.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNoteAccessException("You don't have permission to delete this note");
+            throw new UnauthorizedNoteAccessException(id, currentUser.getId());
         }
         
-        noteRepository.deleteById(id);
+        noteRepository.delete(note);
     }
 
     public long countNotes() {
         User currentUser = getCurrentUser();
         return StreamSupport.stream(noteRepository.findAll().spliterator(), false)
-                .filter(note -> note.getOwner().getId() == currentUser.getId())
+                .filter(note -> note.getOwner().getId().equals(currentUser.getId()))
                 .count();
     }
 

@@ -3,6 +3,7 @@ package com.smartnotes.app.backend.service;
 import com.smartnotes.app.backend.entity.Note;
 import com.smartnotes.app.backend.entity.Notebook;
 import com.smartnotes.app.backend.entity.User;
+import com.smartnotes.app.backend.exception.DuplicateNotebookException;
 import com.smartnotes.app.backend.exception.NotebookNotFoundException;
 import com.smartnotes.app.backend.exception.UnauthorizedNotebookAccessException;
 import com.smartnotes.app.backend.exception.UserNotAuthenticatedException;
@@ -38,6 +39,9 @@ public class NotebookService {
 
     public NotebookResponse createNotebook(NotebookRequest request) {
         User currentUser = getCurrentUser();
+        if (notebookRepository.existsByNameAndOwnerId(request.getName(), currentUser.getId())) {
+            throw new DuplicateNotebookException(request.getName(), currentUser.getId());
+        }
         Notebook notebook = new Notebook();
         notebook.setName(request.getName());
         notebook.setOwner(currentUser);
@@ -48,9 +52,9 @@ public class NotebookService {
     public NotebookResponse getNotebookById(UUID id) {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
-                .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
+                .orElseThrow(() -> new NotebookNotFoundException(id));
         if (!notebook.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNotebookAccessException("You don't have permission to access this notebook");
+            throw new UnauthorizedNotebookAccessException(id, currentUser.getId());
         }
         return mapToResponse(notebook);
     }
@@ -58,9 +62,13 @@ public class NotebookService {
     public NotebookResponse updateNotebook(UUID id, NotebookRequest request) {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
-                .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
+                .orElseThrow(() -> new NotebookNotFoundException(id));
         if (!notebook.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNotebookAccessException("You don't have permission to update this notebook");
+            throw new UnauthorizedNotebookAccessException(id, currentUser.getId());
+        }
+        if (!notebook.getName().equals(request.getName()) &&
+                notebookRepository.existsByNameAndOwnerId(request.getName(), currentUser.getId())) {
+            throw new DuplicateNotebookException(request.getName(), currentUser.getId());
         }
         notebook.setName(request.getName());
         Notebook updatedNotebook = notebookRepository.save(notebook);
@@ -70,11 +78,11 @@ public class NotebookService {
     public void deleteNotebook(UUID id) {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(id)
-                .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + id));
+                .orElseThrow(() -> new NotebookNotFoundException(id));
         if (!notebook.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNotebookAccessException("You don't have permission to delete this notebook");
+            throw new UnauthorizedNotebookAccessException(id, currentUser.getId());
         }
-        notebookRepository.deleteById(id);
+        notebookRepository.delete(notebook);
     }
 
     public long countNotebooks() {
@@ -85,12 +93,11 @@ public class NotebookService {
     public NoteResponse createNoteInNotebook(UUID notebookId, NoteRequest request) {
         User currentUser = getCurrentUser();
         Notebook notebook = notebookRepository.findById(notebookId)
-                .orElseThrow(() -> new NotebookNotFoundException("Notebook not found with id: " + notebookId));
+                .orElseThrow(() -> new NotebookNotFoundException(notebookId));
 
         if (!notebook.getOwner().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedNotebookAccessException("You don't have permission to add notes to this notebook");
+            throw new UnauthorizedNotebookAccessException(notebookId, currentUser.getId());
         }
-
 
         Note note = new Note();
         note.setTitle(request.getTitle());
