@@ -27,6 +27,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(DuplicateNoteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDuplicateNoteException(DuplicateNoteException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                ex.getMessage()
+        );
+    }
+
     @ExceptionHandler(UnauthorizedNoteAccessException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleUnauthorizedNoteAccess(UnauthorizedNoteAccessException ex) {
@@ -89,6 +100,86 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
                 "Unauthorized",
+                ex.getMessage()
+        );
+    }
+
+    // Tag exceptions
+    @ExceptionHandler(TagNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleTagNotFoundException(TagNotFoundException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Tag Not Found",
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DuplicateTagException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDuplicateTagException(DuplicateTagException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(UnauthorizedTagAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUnauthorizedTagAccess(UnauthorizedTagAccessException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                ex.getMessage()
+        );
+    }
+
+    // Notebook exceptions
+    @ExceptionHandler(NotebookNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotebookNotFoundException(NotebookNotFoundException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Notebook Not Found",
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DuplicateNotebookException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDuplicateNotebookException(DuplicateNotebookException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(UnauthorizedNotebookAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUnauthorizedNotebookAccess(UnauthorizedNotebookAccessException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                ex.getMessage()
+        );
+    }
+
+    // User exceptions
+    @ExceptionHandler(UnauthorizedUserAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUnauthorizedUserAccess(UnauthorizedUserAccessException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
                 ex.getMessage()
         );
     }
