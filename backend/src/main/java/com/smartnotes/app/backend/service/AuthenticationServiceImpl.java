@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Authority;
+import com.smartnotes.app.backend.entity.Role;
 import com.smartnotes.app.backend.entity.User;
 import com.smartnotes.app.backend.exception.EmailAlreadyExistsException;
 import com.smartnotes.app.backend.exception.UserNotFoundException;
@@ -74,9 +75,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         boolean isFirstUser = userRepository.count() == 0;
         List<Authority> authorities = new ArrayList<>();
 
-        authorities.add(new Authority("ROLE_USER"));
+        authorities.add(new Authority(Role.ROLE_USER.name()));
         if (isFirstUser) {
-            authorities.add(new Authority("ROLE_ADMIN"));
+            authorities.add(new Authority(Role.ROLE_ADMIN.name()));
         }
 
         return authorities;
