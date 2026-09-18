@@ -14,4 +14,5 @@ import org.springframework.security.core.GrantedAuthority;
 @Setter
 public class Authority implements GrantedAuthority {
     private String authority;
+
 }

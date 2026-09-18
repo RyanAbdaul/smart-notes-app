@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Authority;
+import com.smartnotes.app.backend.entity.Role;
 import com.smartnotes.app.backend.entity.User;
 import com.smartnotes.app.backend.exception.EmailAlreadyExistsException;
 import com.smartnotes.app.backend.exception.UserNotFoundException;
@@ -12,13 +13,11 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -48,12 +47,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findUserByEmail(input.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         String token = jwtService.generateToken(new HashMap<>(), user);
-        
-        // Get user's primary role (first authority)
-        // String role = user.getAuthorities().isEmpty() ? "ROLE_USER" 
-        //         : user.getAuthorities().get(0).getAuthority();
-        
-        return new LoginResponse(token);
+
+        Collection<? extends GrantedAuthority> roles = user.getAuthorities();
+        String role = roles.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(r -> r.equals(Role.ROLE_ADMIN.name()))
+                .findFirst()
+                .orElse(Role.ROLE_USER.name());
+
+        return new LoginResponse(token, role);
     }
 
     private boolean isEmailTaken(String email) {
@@ -74,9 +76,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         boolean isFirstUser = userRepository.count() == 0;
         List<Authority> authorities = new ArrayList<>();
 
-        authorities.add(new Authority("ROLE_USER"));
+        authorities.add(new Authority(Role.ROLE_USER.name()));
         if (isFirstUser) {
-            authorities.add(new Authority("ROLE_ADMIN"));
+            authorities.add(new Authority(Role.ROLE_ADMIN.name()));
         }
 
         return authorities;
