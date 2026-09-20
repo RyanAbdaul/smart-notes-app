@@ -20,4 +20,6 @@ public class NoteResponse {
     // private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String imageUrl;
+    private boolean isPinned;
 }

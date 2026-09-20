@@ -1,0 +1,1 @@
+ALTER TABLE notes ADD is_pinned BOOLEAN NOT NULL;

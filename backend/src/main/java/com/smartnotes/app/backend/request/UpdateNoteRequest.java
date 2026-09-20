@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoteRequest {
+public class UpdateNoteRequest {
 
     @NotBlank(message = "Title is required")
     @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters")
@@ -20,6 +21,9 @@ public class NoteRequest {
     @Size(max = 5000, message = "Description must not exceed 5000 characters")
     private String description;
 
+    @Pattern(regexp = "^https?://.*", message = "Invalid image URL")
+    private String imageUrl;
 
-    // private List<String> tags;
+
+//    private List<String> tags;
 }

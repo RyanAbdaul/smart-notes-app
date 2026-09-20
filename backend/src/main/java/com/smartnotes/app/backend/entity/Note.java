@@ -46,8 +46,10 @@ public class Note {
             joinColumns = @JoinColumn(name = "note_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+
     private List<Tag> tags;
 
+    private String imageUrl;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -56,4 +58,8 @@ public class Note {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private boolean isPinned;
+
 }
