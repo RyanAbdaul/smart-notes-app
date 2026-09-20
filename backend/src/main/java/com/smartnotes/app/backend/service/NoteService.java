@@ -52,7 +52,7 @@ public class NoteService {
 
     public List<NoteResponse> getAllNotes() {
         User currentUser = getCurrentUser();
-        return StreamSupport.stream(noteRepository.findAll().spliterator(), false)
+        return noteRepository.findAllByOrderByIsPinnedDesc().stream()
                 .filter(note -> note.getOwner().getId().equals(currentUser.getId()))
                 .map(this::mapToResponse)
                 .toList();
@@ -115,8 +115,7 @@ public class NoteService {
             throw new UnauthorizedNoteAccessException(id, currentUser.getId());
         }
 
-        boolean isPinned = note.isPinned();
-
+        note.setPinned(!note.isPinned());
         noteRepository.save(note);
     }
 
