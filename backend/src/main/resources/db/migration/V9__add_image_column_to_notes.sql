@@ -1,0 +1,1 @@
+ALTER TABLE notes ADD image_url TEXT;

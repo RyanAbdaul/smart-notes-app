@@ -13,9 +13,8 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -45,6 +44,7 @@ class NoteRepositoryTests {
         note.setTitle(title);
         note.setDescription(description);
         note.setOwner(owner);
+        note.setPinned(false);
         return note;
     }
 
@@ -58,6 +58,8 @@ class NoteRepositoryTests {
         Assertions.assertEquals("Title", savedNote.getTitle());
         Assertions.assertEquals(owner.getId(), savedNote.getOwner().getId());
     }
+
+
 
     @Test
     void NoteRepository_FindById_NoteDoesNotExist_ReturnsEmpty() {
@@ -88,6 +90,31 @@ class NoteRepositoryTests {
         int count = 0;
         for (Note n : notes) count++;
         Assertions.assertEquals(0, count);
+    }
+
+    @Test
+    void NoteRepository_FindAllByOrderByIsPinnedDesc_FirstNoteIsPinned() {
+        // Act
+        Note pinnedNote = new Note();
+        pinnedNote.setPinned(true);
+        pinnedNote.setOwner(owner);
+        pinnedNote.setTitle("test");
+        pinnedNote.setDescription("test");
+
+        Note normalNote = new Note();
+        normalNote.setPinned(true);
+        normalNote.setOwner(owner);
+        normalNote.setTitle("test");
+        normalNote.setDescription("test");
+
+        noteRepository.save(pinnedNote);
+        noteRepository.save(normalNote);
+
+        List<Note> notes = noteRepository.findAllByOrderByIsPinnedDesc();
+
+        // Assert
+        boolean note = notes.getFirst().isPinned();
+        Assertions.assertTrue(note);
     }
 
     @Test

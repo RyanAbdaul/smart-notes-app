@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.rest;
 
 import com.smartnotes.app.backend.request.NoteRequest;
+import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.service.NoteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,9 +47,7 @@ public class NoteController {
             description = "Retrieves a list of all notes belonging to the authenticated user"
     )
     public List<NoteResponse> getAllNotes() {
-        List<NoteResponse> notes = noteService.getAllNotes();
-        System.out.println(notes);
-        return notes;
+        return noteService.getAllNotes();
     }
 
     @PatchMapping("/{id}")
@@ -56,10 +55,20 @@ public class NoteController {
             summary = "Update a note",
             description = "Updates an existing note's title and description. Only the note owner can update it."
     )
+
     public NoteResponse updateNote(
             @PathVariable UUID id,
-            @Valid @RequestBody NoteRequest request) {
+            @Valid @RequestBody UpdateNoteRequest request) {
         return noteService.updateNote(id, request);
+    }
+
+    @PatchMapping("/{id}/pin")
+    @Operation(
+            summary = "Pin a note",
+            description = "Pin or unpin an existing note. Only the note owner can pin or unpin it."
+    )
+    public void pinNote(@PathVariable UUID id) {
+        noteService.pinNote(id);
     }
 
     @DeleteMapping("/{id}")
@@ -80,4 +89,6 @@ public class NoteController {
     public long countNotes() {
         return noteService.countNotes();
     }
+
+
 }
