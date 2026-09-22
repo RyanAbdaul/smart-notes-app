@@ -1,0 +1,19 @@
+.spinner {
+  animation: spinner 1.5s infinite linear;
+  border: solid 4px #fff;
+  outline: 4px #f36703c5 solid;
+}
+@keyframes spinner {
+  0% {
+    border-top: solid 4px #f36703c5;
+  }
+  25% {
+    border-right: solid 4px #f36703c5;
+  }
+  50% {
+    border-bottom: solid 4px #f36703c5;
+  }
+  100% {
+    border-left:solid 4px #f36703c5 ;
+  }
+}

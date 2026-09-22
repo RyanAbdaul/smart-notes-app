@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import { Link } from "react-router";
 import { logout } from "../../features/auth/authSlice";
 
 const Sidebar = ({  hidden, setIsOpen }) => {

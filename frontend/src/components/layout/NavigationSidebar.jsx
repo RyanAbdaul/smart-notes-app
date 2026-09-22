@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  {  useState } from "react";
 import {  useSelector } from "react-redux";
 import { FaNotesMedical } from "react-icons/fa6";
 import { TbPinned } from "react-icons/tb";

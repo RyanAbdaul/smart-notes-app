@@ -5,15 +5,12 @@ import { FaArrowDown } from "react-icons/fa";
 import Sidebar from "../common/Sidebar";
 import { useState } from "react";
 import Search from "../common/Search";
-import { useDispatch } from "react-redux";
-import { setActiveNote } from "../../features/notes/notesSlice";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-const dispatch=useDispatch()
   return (
     <header className="px-5 py-3 m-auto flex items-center w-full bg-[#FCF8FB]">
       {/* brand logo */}
@@ -28,12 +25,11 @@ const dispatch=useDispatch()
       {/* Add Task Buttom */}
       <div className="w-1/3">
         <button 
-        onClick={()=>dispatch(setActiveNote(null))}
         className="bg-amber-600 p-3 flex justify-between items-center rounded-xl  text-amber-50 font-bold hover:cursor-pointer hover:bg-amber-700">
           <span className="text-2xl mr-1">
             <MdFormatListBulletedAdd />
           </span>
-          New Note
+          Search
         </button>
       </div>
       {/* Auth select menu*/}

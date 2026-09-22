@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Inputs from "../components/common/Inputs";
 import { userRegister } from "../features/auth/authService";
 import { useDispatch, useSelector } from "react-redux";
+import ErrorHandler from "../utils/ErrorHandler";
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { error, status } = useSelector((state) => state.auth);
   const isLoading = status === "loading";
@@ -13,8 +15,11 @@ const RegisterPage = () => {
     email: "",
     password: "",
   });
-
-  console.log( error, status);
+  useEffect(() => {
+    if (status === "succeeded") {
+      navigate("/");
+    }
+  }, [status,navigate]);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((currentData) => ({ ...currentData, [name]: value }));
@@ -69,12 +74,12 @@ const RegisterPage = () => {
             value={formData.password}
             onChange={handleChange}
           />
-          {error && <span>{error}</span>}
+            {error && <ErrorHandler error={error}/>}
           <button
             type="submit"
             className={`w-full rounded-xl bg-amber-600 px-4 py-3 font-semibold text-white transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-200 ${isLoading ? "cursor-not-allowed" : ""}`}
             disabled={isLoading}
-          >
+            >
             {isLoading ? "Creating account..." : "Create account"}
           </button>
         </form>
