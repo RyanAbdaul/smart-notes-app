@@ -50,10 +50,11 @@ public class NoteService {
         return mapToResponse(note);
     }
 
-    public List<NoteResponse> getAllNotes() {
+    public List<NoteResponse> getAllNotes(UUID id, String search) {
         User currentUser = getCurrentUser();
-        return noteRepository.findAllByOrderByIsPinnedDesc().stream()
-                .filter(note -> note.getOwner().getId().equals(currentUser.getId()))
+        return noteRepository.findNotes(currentUser.getId(), id, search)
+                .stream()
+                .sorted((n1, n2) -> Boolean.compare(n2.isPinned(), n1.isPinned()))
                 .map(this::mapToResponse)
                 .toList();
     }
