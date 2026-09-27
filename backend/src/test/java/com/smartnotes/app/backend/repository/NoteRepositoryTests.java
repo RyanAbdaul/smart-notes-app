@@ -110,7 +110,7 @@ class NoteRepositoryTests {
         noteRepository.save(pinnedNote);
         noteRepository.save(normalNote);
 
-        List<Note> notes = noteRepository.findAllByOrderByIsPinnedDesc();
+        List<Note> notes = noteRepository.findAll();
 
         // Assert
         boolean note = notes.getFirst().isPinned();

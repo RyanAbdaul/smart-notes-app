@@ -4,6 +4,8 @@ import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.response.LoginResponse;
 import com.smartnotes.app.backend.service.AuthenticationService;
+import com.smartnotes.app.backend.service.RateLimiterService;
+import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,13 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final Map<String, Bucket> registerBuckets = new ConcurrentHashMap<>();
-
-    private Bucket newBucket() {
-        return Bucket.builder()
-                .addLimit(limit -> limit.capacity(5).refillGreedy(5, Duration.ofMinutes(1)))
-                .build();
-    }
+    private final RateLimiterService rateLimiterService;
 
 
     @PostMapping("/register")
@@ -42,11 +38,9 @@ public class AuthenticationController {
 
     public void register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) throws Exception {
         String ip = httpRequest.getRemoteAddr();
-        Bucket bucket = registerBuckets.computeIfAbsent(ip, k -> newBucket());
-        if (!bucket.tryConsume(1)) {
+        if (!rateLimiterService.isAllowed("register", ip)) {
             throw new Exception("Too many registration attempts, try again later");
         }
-
         authenticationService.register(request);
     }
 
@@ -55,7 +49,11 @@ public class AuthenticationController {
             summary = "Login user",
             description = "Authenticates a user with email and password, returns a JWT token for subsequent API requests"
     )
-    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request) {
+    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request, HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("login", ip)) {
+            throw new RuntimeException("Too many login attempts, try again later");
+        }
         System.out.println("TEST");
         return authenticationService.login(request);
     }

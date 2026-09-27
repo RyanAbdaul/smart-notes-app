@@ -4,9 +4,12 @@ import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.service.NoteService;
+import com.smartnotes.app.backend.service.RateLimiterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +19,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/notes")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Tag(name = "Notes", description = "Note management API - Create, read, update and delete notes")
 public class NoteController {
 
     private final NoteService noteService;
+    private final RateLimiterService rateLimiterService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,7 +32,11 @@ public class NoteController {
             summary = "Create a new note",
             description = "Creates a new note with title and description. The note will be associated with the authenticated user."
     )
-    public NoteResponse createNote(@Valid @RequestBody NoteRequest request) {
+    public NoteResponse createNote(@Valid @RequestBody NoteRequest request, HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("create_note", ip)) {
+            throw new RuntimeException("Too many note creation attempts, try again later");
+        }
         return noteService.createNote(request);
     }
 
@@ -44,10 +52,11 @@ public class NoteController {
     @GetMapping
     @Operation(
             summary = "Get all notes",
-            description = "Retrieves a list of all notes belonging to the authenticated user"
+            description = "Retrieves a list of all notes belonging to the authenticated user. Can filter by note ID and search in title/description."
     )
-    public List<NoteResponse> getAllNotes() {
-        return noteService.getAllNotes();
+    public List<NoteResponse> getAllNotes(@RequestParam(required = false) UUID id,
+                                          @RequestParam(required = false) String search) {
+        return noteService.getAllNotes(id, search);
     }
 
     @PatchMapping("/{id}")
@@ -77,7 +86,11 @@ public class NoteController {
             summary = "Delete a note",
             description = "Permanently deletes a note from the system. Only the note owner can delete it."
     )
-    public void deleteNote(@PathVariable UUID id) {
+    public void deleteNote(@PathVariable UUID id, HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("delete_note", ip)) {
+            throw new RuntimeException("Too many note deletion attempts, try again later");
+        }
         noteService.deleteNote(id);
     }
 
