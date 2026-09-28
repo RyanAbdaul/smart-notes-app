@@ -10,11 +10,11 @@ const authSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(userRegister.pending, (state, action) => {
+      .addCase(userRegister.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(userRegister.fulfilled, (state, action) => {
+      .addCase(userRegister.fulfilled, (state) => {
         state.error = null;
         state.status = "succeeded";
       })
@@ -23,7 +23,7 @@ const authSlice = createSlice({
         state.error = action.payload || action.error.message;
       })
       // Login Reducer
-      .addCase(userLogin.pending, (state, action) => {
+      .addCase(userLogin.pending, (state) => {
         state.error = null;
         state.status = "loading";
       })

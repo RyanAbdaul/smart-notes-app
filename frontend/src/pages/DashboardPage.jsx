@@ -10,17 +10,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllNotes } from "../features/notes/notesService";
 
 const DashboardPage = () => {
-  const token = useSelector((state) => state.auth.token);
+  const { token } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if(token){
-
+    if (token) {
       dispatch(getAllNotes());
-      
     }
-  }, [dispatch,token]);
-
+  }, [dispatch, token]);
   return (
     <>
       <Header />

@@ -1,4 +1,3 @@
-import React from "react";
 import Buttons from "../common/Buttons";
 import { LuStickyNote } from "react-icons/lu";
 import { CiFolderOn } from "react-icons/ci";

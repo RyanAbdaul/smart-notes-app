@@ -2,10 +2,13 @@ package com.smartnotes.app.backend.rest;
 
 import com.smartnotes.app.backend.request.TagRequest;
 import com.smartnotes.app.backend.response.TagResponse;
+import com.smartnotes.app.backend.service.RateLimiterService;
 import com.smartnotes.app.backend.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +18,21 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/tags")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Tag(name = "Tags", description = "Tags management API")
 public class TagController {
 
     private final TagService tagService;
+    private final RateLimiterService rateLimiterService;
 
     @Operation(summary = "Create a new tag")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public TagResponse create(@Valid @RequestBody TagRequest request) {
+    public TagResponse create(@Valid @RequestBody TagRequest request, HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("create_tag", ip)) {
+            throw new RuntimeException("Too many tag creation attempts, try again later");
+        }
         return tagService.create(request);
     }
 

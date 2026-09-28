@@ -5,9 +5,12 @@ import com.smartnotes.app.backend.request.NotebookRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.response.NotebookResponse;
 import com.smartnotes.app.backend.service.NotebookService;
+import com.smartnotes.app.backend.service.RateLimiterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +20,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/notebooks")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Tag(name = "Notebooks", description = "Notebook management API")
 public class NotebookController {
 
     private final NotebookService notebookService;
+    private final RateLimiterService rateLimiterService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,7 +45,12 @@ public class NotebookController {
     )
     public NoteResponse createNoteInNotebook(
             @PathVariable UUID notebookId,
-            @Valid @RequestBody NoteRequest request) {
+            @Valid @RequestBody NoteRequest request,
+            HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("create_note_in_notebook", ip)) {
+            throw new RuntimeException("Too many note creation attempts in notebook, try again later");
+        }
         return notebookService.createNoteInNotebook(notebookId, request);
     }
 
@@ -70,7 +79,12 @@ public class NotebookController {
     )
     public NotebookResponse updateNotebook(
             @PathVariable UUID id,
-            @Valid @RequestBody NotebookRequest request) {
+            @Valid @RequestBody NotebookRequest request,
+            HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("update_notebook", ip)) {
+            throw new RuntimeException("Too many notebook update attempts, try again later");
+        }
         return notebookService.updateNotebook(id, request);
     }
 
@@ -80,7 +94,11 @@ public class NotebookController {
             summary = "Delete a notebook",
             description = "Permanently deletes a notebook from the system. Only the notebook owner can delete it."
     )
-    public void deleteNotebook(@PathVariable UUID id) {
+    public void deleteNotebook(@PathVariable UUID id, HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("delete_notebook", ip)) {
+            throw new RuntimeException("Too many notebook deletion attempts, try again later");
+        }
         notebookService.deleteNotebook(id);
     }
 
