@@ -1,6 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
-import com.smartnotes.app.backend.exception.TooMuchAttemptsException;
+import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.response.LoginResponse;
@@ -34,7 +34,7 @@ public class AuthenticationController {
     public void register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) throws Exception {
         String ip = httpRequest.getRemoteAddr();
         if (!rateLimiterService.isAllowed("register", ip)) {
-            throw new TooMuchAttemptsException("Too many registration attempts, try again later");
+            throw new TooManyAttemptsException("Too many registration attempts, try again later");
         }
         authenticationService.register(request);
     }
@@ -47,7 +47,7 @@ public class AuthenticationController {
     public LoginResponse login(@Valid @RequestBody AuthenticationRequest request, HttpServletRequest httpRequest) {
         String ip = httpRequest.getRemoteAddr();
         if (!rateLimiterService.isAllowed("login", ip)) {
-            throw new TooMuchAttemptsException("Too many login attempts, try again later");
+            throw new TooManyAttemptsException("Too many login attempts, try again later");
         }
         System.out.println("TEST");
         return authenticationService.login(request);
