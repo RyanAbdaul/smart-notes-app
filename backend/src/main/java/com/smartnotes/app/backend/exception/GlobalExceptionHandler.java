@@ -32,8 +32,8 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleTooMuchAttemptsException(TooMuchAttemptsException ex) {
         return new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                "Note Not Found",
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                "Too Many Requests",
                 ex.getMessage()
         );
     }
