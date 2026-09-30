@@ -4,7 +4,7 @@ import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.NotebookRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.response.NotebookResponse;
-import com.smartnotes.app.backend.rest.NotebookController;
+import com.smartnotes.app.backend.controller.NotebookController;
 import com.smartnotes.app.backend.service.NotebookService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

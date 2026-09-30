@@ -215,7 +215,7 @@ class NoteServiceTests {
 //        note3.setPinned(false);
 //
 //        List<Note> notes = List.of(note1, note2, note3);
-//        when(noteRepository.findAllByOrderByIsPinnedDesc()).thenReturn(notes);
+//        when(noteRepository.findAll()).thenReturn(notes);
 //
 //        // Act
 //        List<NoteResponse> result = noteService.getAllNotes();
@@ -226,7 +226,7 @@ class NoteServiceTests {
 //        Assertions.assertThat(result.get(0).isPinned()).isTrue();
 //        Assertions.assertThat(result.get(1).getId()).isEqualTo(note2.getId());
 //        Assertions.assertThat(result.get(1).isPinned()).isFalse();
-//        Mockito.verify(noteRepository).findAllByOrderByIsPinnedDesc();
+//        Mockito.verify(noteRepository).findNotes();
 //    }
 //
 //    @Test

@@ -3,7 +3,7 @@ package com.smartnotes.app.backend.controller;
 import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.response.LoginResponse;
-import com.smartnotes.app.backend.rest.AuthenticationController;
+import com.smartnotes.app.backend.controller.AuthenticationController;
 import com.smartnotes.app.backend.service.AuthenticationService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

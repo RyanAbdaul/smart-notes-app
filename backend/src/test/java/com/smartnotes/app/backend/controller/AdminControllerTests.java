@@ -2,7 +2,7 @@ package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
-import com.smartnotes.app.backend.rest.AdminController;
+import com.smartnotes.app.backend.controller.AdminController;
 import com.smartnotes.app.backend.service.AdminService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -2,7 +2,7 @@ package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.request.TagRequest;
 import com.smartnotes.app.backend.response.TagResponse;
-import com.smartnotes.app.backend.rest.TagController;
+import com.smartnotes.app.backend.controller.TagController;
 import com.smartnotes.app.backend.service.TagService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

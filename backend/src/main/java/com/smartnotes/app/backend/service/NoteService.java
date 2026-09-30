@@ -12,6 +12,8 @@ import com.smartnotes.app.backend.response.NoteResponse;
 import com.smartnotes.app.backend.util.DebuggingTools;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,14 +37,17 @@ public class NoteService {
         note.setDescription(request.getDescription());
         note.setPinned(false);
         note.setOwner(currentUser);
-        
+
         Note savedNote = noteRepository.save(note);
         return mapToResponse(savedNote);
     }
 
+
+    @Cacheable(value = "notes", key = "#id")
     public NoteResponse getNoteById(UUID id) {
 
         User currentUser = getCurrentUser();
+        debuggingTools.SlowDatabaseCalls();
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException(id));
 

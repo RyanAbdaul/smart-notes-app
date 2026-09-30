@@ -18,6 +18,18 @@ services:
     networks:
       - smartnotes-network
 
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smartnotes-network
+
   api:
     build:
       context: .
@@ -28,8 +40,12 @@ services:
       - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/smartnotes'
       - 'SPRING_DATASOURCE_USERNAME=root'
       - 'SPRING_DATASOURCE_PASSWORD='
+      - 'SPRING_DATA_REDIS_HOST=redis'
+      - 'SPRING_DATA_REDIS_PORT=6379'
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - smartnotes-network

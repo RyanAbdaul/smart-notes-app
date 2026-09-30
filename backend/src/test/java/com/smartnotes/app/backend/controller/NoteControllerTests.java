@@ -3,7 +3,7 @@ package com.smartnotes.app.backend.controller;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
-import com.smartnotes.app.backend.rest.NoteController;
+import com.smartnotes.app.backend.controller.NoteController;
 import com.smartnotes.app.backend.service.NoteService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
