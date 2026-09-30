@@ -27,6 +27,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(TooMuchAttemptsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleTooMuchAttemptsException(TooMuchAttemptsException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Note Not Found",
+                ex.getMessage()
+        );
+    }
+
     @ExceptionHandler(DuplicateNoteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleDuplicateNoteException(DuplicateNoteException ex) {
