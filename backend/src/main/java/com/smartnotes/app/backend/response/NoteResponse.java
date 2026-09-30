@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,6 @@ public class NoteResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String imageUrl;
-    private boolean isPinned;
+
+    private boolean pinned;
 }

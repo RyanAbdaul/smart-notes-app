@@ -1,4 +1,4 @@
-package com.smartnotes.app.backend.rest;
+package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.request.TagRequest;
 import com.smartnotes.app.backend.response.TagResponse;
@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

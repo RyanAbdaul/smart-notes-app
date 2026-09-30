@@ -1,12 +1,11 @@
-package com.smartnotes.app.backend.rest;
+package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.exception.TooMuchAttemptsException;
 import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.response.LoginResponse;
 import com.smartnotes.app.backend.service.AuthenticationService;
 import com.smartnotes.app.backend.service.RateLimiterService;
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +13,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,7 +34,7 @@ public class AuthenticationController {
     public void register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) throws Exception {
         String ip = httpRequest.getRemoteAddr();
         if (!rateLimiterService.isAllowed("register", ip)) {
-            throw new Exception("Too many registration attempts, try again later");
+            throw new TooMuchAttemptsException("Too many registration attempts, try again later");
         }
         authenticationService.register(request);
     }
@@ -52,7 +47,7 @@ public class AuthenticationController {
     public LoginResponse login(@Valid @RequestBody AuthenticationRequest request, HttpServletRequest httpRequest) {
         String ip = httpRequest.getRemoteAddr();
         if (!rateLimiterService.isAllowed("login", ip)) {
-            throw new RuntimeException("Too many login attempts, try again later");
+            throw new TooMuchAttemptsException("Too many login attempts, try again later");
         }
         System.out.println("TEST");
         return authenticationService.login(request);

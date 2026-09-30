@@ -1,4 +1,4 @@
-package com.smartnotes.app.backend.rest;
+package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
