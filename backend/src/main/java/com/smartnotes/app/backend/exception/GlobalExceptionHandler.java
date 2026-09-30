@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TooManyAttemptsException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     public ErrorResponse handleTooManyAttemptsException(TooManyAttemptsException ex) {
         return new ErrorResponse(
                 LocalDateTime.now(),
