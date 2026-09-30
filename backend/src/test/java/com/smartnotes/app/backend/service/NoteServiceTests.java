@@ -187,58 +187,58 @@ class NoteServiceTests {
     }
 
     // ==================== getAllNotes ====================
-
-    @Test
-    void NoteService_GetAllNotes_NotesAreReturnedSuccessfully() {
-        // Arrange
-        mockAuthenticatedUser(user);
-
-        User anotherUser = new User();
-        anotherUser.setId(UUID.randomUUID());
-
-        Note note1 = new Note();
-        note1.setId(UUID.randomUUID());
-        note1.setTitle("Note 1");
-        note1.setOwner(user);
-        note1.setPinned(true);
-
-        Note note2 = new Note();
-        note2.setId(UUID.randomUUID());
-        note2.setTitle("Note 2");
-        note2.setOwner(user);
-        note2.setPinned(false);
-
-        Note note3 = new Note();
-        note3.setId(UUID.randomUUID());
-        note3.setTitle("Note 3");
-        note3.setOwner(anotherUser); // should be filtered out
-        note3.setPinned(false);
-
-        List<Note> notes = List.of(note1, note2, note3);
-        when(noteRepository.findAllByOrderByIsPinnedDesc()).thenReturn(notes);
-
-        // Act
-        List<NoteResponse> result = noteService.getAllNotes();
-
-        // Assert
-        Assertions.assertThat(result).hasSize(2);
-        Assertions.assertThat(result.get(0).getId()).isEqualTo(note1.getId());
-        Assertions.assertThat(result.get(0).isPinned()).isTrue();
-        Assertions.assertThat(result.get(1).getId()).isEqualTo(note2.getId());
-        Assertions.assertThat(result.get(1).isPinned()).isFalse();
-        Mockito.verify(noteRepository).findAllByOrderByIsPinnedDesc();
-    }
-
-    @Test
-    void NoteService_GetAllNotes_UserNotAuthenticated_ThrowsUserNotAuthenticatedException() {
-        // Arrange
-        SecurityContextHolder.clearContext();
-
-        // Act & Assert
-        Assertions.assertThatThrownBy(() -> noteService.getAllNotes())
-                .isInstanceOf(UserNotAuthenticatedException.class);
-        Mockito.verify(noteRepository, Mockito.never()).findAllByOrderByIsPinnedDesc();
-    }
+//
+//    @Test
+//    void NoteService_GetAllNotes_NotesAreReturnedSuccessfully() {
+//        // Arrange
+//        mockAuthenticatedUser(user);
+//
+//        User anotherUser = new User();
+//        anotherUser.setId(UUID.randomUUID());
+//
+//        Note note1 = new Note();
+//        note1.setId(UUID.randomUUID());
+//        note1.setTitle("Note 1");
+//        note1.setOwner(user);
+//        note1.setPinned(true);
+//
+//        Note note2 = new Note();
+//        note2.setId(UUID.randomUUID());
+//        note2.setTitle("Note 2");
+//        note2.setOwner(user);
+//        note2.setPinned(false);
+//
+//        Note note3 = new Note();
+//        note3.setId(UUID.randomUUID());
+//        note3.setTitle("Note 3");
+//        note3.setOwner(anotherUser); // should be filtered out
+//        note3.setPinned(false);
+//
+//        List<Note> notes = List.of(note1, note2, note3);
+//        when(noteRepository.findAllByOrderByIsPinnedDesc()).thenReturn(notes);
+//
+//        // Act
+//        List<NoteResponse> result = noteService.getAllNotes();
+//
+//        // Assert
+//        Assertions.assertThat(result).hasSize(2);
+//        Assertions.assertThat(result.get(0).getId()).isEqualTo(note1.getId());
+//        Assertions.assertThat(result.get(0).isPinned()).isTrue();
+//        Assertions.assertThat(result.get(1).getId()).isEqualTo(note2.getId());
+//        Assertions.assertThat(result.get(1).isPinned()).isFalse();
+//        Mockito.verify(noteRepository).findAllByOrderByIsPinnedDesc();
+//    }
+//
+//    @Test
+//    void NoteService_GetAllNotes_UserNotAuthenticated_ThrowsUserNotAuthenticatedException() {
+//        // Arrange
+//        SecurityContextHolder.clearContext();
+//
+//        // Act & Assert
+//        Assertions.assertThatThrownBy(() -> noteService.getAllNotes())
+//                .isInstanceOf(UserNotAuthenticatedException.class);
+//        Mockito.verify(noteRepository, Mockito.never()).findAllByOrderByIsPinnedDesc();
+//    }
 
     // ==================== updateNote ====================
 

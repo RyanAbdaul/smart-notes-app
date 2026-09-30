@@ -9,6 +9,7 @@ import com.smartnotes.app.backend.repository.NoteRepository;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
+import com.smartnotes.app.backend.util.DebuggingTools;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,10 +25,11 @@ import java.util.stream.StreamSupport;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+    private final DebuggingTools debuggingTools;
 
     public NoteResponse createNote(NoteRequest request) {
         User currentUser = getCurrentUser();
-        
+        debuggingTools.SlowDatabaseCalls();
         Note note = new Note();
         note.setTitle(request.getTitle());
         note.setDescription(request.getDescription());
@@ -39,6 +41,7 @@ public class NoteService {
     }
 
     public NoteResponse getNoteById(UUID id) {
+
         User currentUser = getCurrentUser();
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException(id));
@@ -101,7 +104,7 @@ public class NoteService {
 
     public long countNotes() {
         User currentUser = getCurrentUser();
-        return StreamSupport.stream(noteRepository.findAll().spliterator(), false)
+        return noteRepository.findAll().stream()
                 .filter(note -> note.getOwner().getId().equals(currentUser.getId()))
                 .count();
     }

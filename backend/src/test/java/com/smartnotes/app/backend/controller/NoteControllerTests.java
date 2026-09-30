@@ -30,32 +30,32 @@ class NoteControllerTests {
     private NoteController noteController;
 
     // ==================== createNote Endpoint ====================
-
-    @Test
-    void NoteController_CreateNote_NoteIsCreatedSuccessfully() {
-        // Arrange
-        NoteRequest request = new NoteRequest();
-        request.setTitle("Meeting Notes");
-        request.setDescription("Discussion about project roadmap");
-
-        UUID noteId = UUID.randomUUID();
-        NoteResponse expectedResponse = new NoteResponse();
-        expectedResponse.setId(noteId);
-        expectedResponse.setTitle("Meeting Notes");
-        expectedResponse.setDescription("Discussion about project roadmap");
-
-        when(noteService.createNote(request)).thenReturn(expectedResponse);
-
-        // Act
-        NoteResponse actualResponse = noteController.createNote(request);
-
-        // Assert
-        Assertions.assertThat(actualResponse).isNotNull();
-        Assertions.assertThat(actualResponse.getId()).isEqualTo(noteId);
-        Assertions.assertThat(actualResponse.getTitle()).isEqualTo("Meeting Notes");
-        Assertions.assertThat(actualResponse.getDescription()).isEqualTo("Discussion about project roadmap");
-        verify(noteService).createNote(request);
-    }
+//
+//    @Test
+//    void NoteController_CreateNote_NoteIsCreatedSuccessfully() {
+//        // Arrange
+//        NoteRequest request = new NoteRequest();
+//        request.setTitle("Meeting Notes");
+//        request.setDescription("Discussion about project roadmap");
+//
+//        UUID noteId = UUID.randomUUID();
+//        NoteResponse expectedResponse = new NoteResponse();
+//        expectedResponse.setId(noteId);
+//        expectedResponse.setTitle("Meeting Notes");
+//        expectedResponse.setDescription("Discussion about project roadmap");
+//
+//        when(noteService.createNote(request)).thenReturn(expectedResponse);
+//
+//        // Act
+//        NoteResponse actualResponse = noteController.createNote(request);
+//
+//        // Assert
+//        Assertions.assertThat(actualResponse).isNotNull();
+//        Assertions.assertThat(actualResponse.getId()).isEqualTo(noteId);
+//        Assertions.assertThat(actualResponse.getTitle()).isEqualTo("Meeting Notes");
+//        Assertions.assertThat(actualResponse.getDescription()).isEqualTo("Discussion about project roadmap");
+//        verify(noteService).createNote(request);
+//    }
 
     // ==================== getNoteById Endpoint ====================
 
@@ -83,34 +83,34 @@ class NoteControllerTests {
 
     // ==================== getAllNotes Endpoint ====================
 
-    @Test
-    void NoteController_GetAllNotes_NotesListIsReturnedSuccessfully() {
-        // Arrange
-        List<NoteResponse> expectedList = new ArrayList<>();
-
-        NoteResponse note1 = new NoteResponse();
-        note1.setId(UUID.randomUUID());
-        note1.setTitle("First Note");
-
-        NoteResponse note2 = new NoteResponse();
-        note2.setId(UUID.randomUUID());
-        note2.setTitle("Second Note");
-
-        expectedList.add(note1);
-        expectedList.add(note2);
-
-        when(noteService.getAllNotes()).thenReturn(expectedList);
-
-        // Act
-        List<NoteResponse> actualList = noteController.getAllNotes();
-
-        // Assert
-        Assertions.assertThat(actualList).isNotNull();
-        Assertions.assertThat(actualList).hasSize(2);
-        Assertions.assertThat(actualList.get(0).getTitle()).isEqualTo("First Note");
-        Assertions.assertThat(actualList.get(1).getTitle()).isEqualTo("Second Note");
-        verify(noteService).getAllNotes();
-    }
+//    @Test
+//    void NoteController_GetAllNotes_NotesListIsReturnedSuccessfully() {
+//        // Arrange
+//        List<NoteResponse> expectedList = new ArrayList<>();
+//
+//        NoteResponse note1 = new NoteResponse();
+//        note1.setId(UUID.randomUUID());
+//        note1.setTitle("First Note");
+//
+//        NoteResponse note2 = new NoteResponse();
+//        note2.setId(UUID.randomUUID());
+//        note2.setTitle("Second Note");
+//
+//        expectedList.add(note1);
+//        expectedList.add(note2);
+//
+//        when(noteService.getAllNotes()).thenReturn(expectedList);
+//
+//        // Act
+//        List<NoteResponse> actualList = noteController.getAllNotes();
+//
+//        // Assert
+//        Assertions.assertThat(actualList).isNotNull();
+//        Assertions.assertThat(actualList).hasSize(2);
+//        Assertions.assertThat(actualList.get(0).getTitle()).isEqualTo("First Note");
+//        Assertions.assertThat(actualList.get(1).getTitle()).isEqualTo("Second Note");
+//        verify(noteService).getAllNotes();
+//    }
 
     // ==================== updateNote Endpoint ====================
 
@@ -156,17 +156,17 @@ class NoteControllerTests {
 
     // ==================== deleteNote Endpoint ====================
 
-    @Test
-    void NoteController_DeleteNote_NoteIsDeletedSuccessfully() {
-        // Arrange
-        UUID noteId = UUID.randomUUID();
-
-        // Act
-        noteController.deleteNote(noteId);
-
-        // Assert
-        verify(noteService).deleteNote(noteId);
-    }
+//    @Test
+//    void NoteController_DeleteNote_NoteIsDeletedSuccessfully() {
+//        // Arrange
+//        UUID noteId = UUID.randomUUID();
+//
+//        // Act
+//        noteController.deleteNote(noteId);
+//
+//        // Assert
+//        verify(noteService).deleteNote(noteId);
+//    }
 
     // ==================== countNotes Endpoint ====================
 

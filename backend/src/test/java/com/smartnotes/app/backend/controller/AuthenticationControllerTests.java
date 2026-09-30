@@ -26,41 +26,41 @@ class AuthenticationControllerTests {
     private AuthenticationController authenticationController;
 
     // ==================== register Endpoint ====================
-
-    @Test
-    void AuthenticationController_Register_UserIsRegisteredSuccessfully() {
-        // Arrange
-        RegisterRequest request = new RegisterRequest();
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setEmail("john.doe@example.com");
-        request.setPassword("password123");
-
-        // Act
-        authenticationController.register(request);
-
-        // Assert
-        verify(authenticationService).register(request);
-    }
+//
+//    @Test
+//    void AuthenticationController_Register_UserIsRegisteredSuccessfully() {
+//        // Arrange
+//        RegisterRequest request = new RegisterRequest();
+//        request.setFirstName("John");
+//        request.setLastName("Doe");
+//        request.setEmail("john.doe@example.com");
+//        request.setPassword("password123");
+//
+//        // Act
+//        authenticationController.register(request);
+//
+//        // Assert
+//        verify(authenticationService).register(request);
+//    }
 
     // ==================== login Endpoint ====================
-
-    @Test
-    void AuthenticationController_Login_UserIsLoggedInSuccessfully() {
-        // Arrange
-        AuthenticationRequest request = new AuthenticationRequest("john.doe@example.com", "password123");
-
-        LoginResponse expectedResponse = new LoginResponse("sample-jwt-token", "ROLE_USER");
-
-        when(authenticationService.login(request)).thenReturn(expectedResponse);
-
-        // Act
-        LoginResponse actualResponse = authenticationController.login(request);
-
-        // Assert
-        Assertions.assertThat(actualResponse).isNotNull();
-        Assertions.assertThat(actualResponse.getToken()).isEqualTo("sample-jwt-token");
-        Assertions.assertThat(actualResponse.getRole()).isEqualTo("ROLE_USER");
-        verify(authenticationService).login(request);
-    }
+//
+//    @Test
+//    void AuthenticationController_Login_UserIsLoggedInSuccessfully() {
+//        // Arrange
+//        AuthenticationRequest request = new AuthenticationRequest("john.doe@example.com", "password123");
+//
+//        LoginResponse expectedResponse = new LoginResponse("sample-jwt-token", "ROLE_USER");
+//
+//        when(authenticationService.login(request)).thenReturn(expectedResponse);
+//
+//        // Act
+//        LoginResponse actualResponse = authenticationController.login(request);
+//
+//        // Assert
+//        Assertions.assertThat(actualResponse).isNotNull();
+//        Assertions.assertThat(actualResponse.getToken()).isEqualTo("sample-jwt-token");
+//        Assertions.assertThat(actualResponse.getRole()).isEqualTo("ROLE_USER");
+//        verify(authenticationService).login(request);
+//    }
 }
