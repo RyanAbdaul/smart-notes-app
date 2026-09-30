@@ -40,7 +40,7 @@ public class RateLimiterService {
 
         Bucket bucket = proxyManager.builder().build(key, () ->
                 BucketConfiguration.builder().addLimit(bandwidth).build());
-        
+
         return bucket.tryConsume(1);
 
     }

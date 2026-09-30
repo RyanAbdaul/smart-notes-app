@@ -1,8 +1,7 @@
 package com.smartnotes.app.backend.config;
+
 import io.github.bucket4j.distributed.ExpirationAfterWriteStrategy;
 import io.github.bucket4j.redis.lettuce.Bucket4jLettuce;
-import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import io.github.bucket4j.distributed.proxy.ProxyManager;
 import io.lettuce.core.RedisClient;
 import org.springframework.cache.CacheManager;
@@ -25,10 +24,10 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-    @Value("${spring.data.redis.host:localhost}")
+    @Value("${rate-limiter.redis.host}")
     private String host;
 
-    @Value("${spring.data.redis.port:6379}")
+    @Value("${rate-limiter.redis.port}")
     private int port;
 
     @Bean
@@ -75,4 +74,6 @@ public class RedisConfig {
                                 .basedOnTimeForRefillingBucketUpToMax(Duration.ofMinutes(1)))
                 .build();
     }
+
+
 }

@@ -29,6 +29,19 @@ services:
       retries: 5
     networks:
       - smartnotes-network
+  redis-rate-limiter:
+    image: 'redis:latest'
+    ports:
+      - '6380:6379'
+    labels:
+      org.springframework.boot.service-connection: "false"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smartnotes-network
 
   api:
     build:

@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
@@ -54,7 +55,12 @@ public class NoteController {
             description = "Retrieves a list of all notes belonging to the authenticated user. Can filter by note ID and search in title/description."
     )
     public List<NoteResponse> getAllNotes(@RequestParam(required = false) UUID id,
-                                          @RequestParam(required = false) String search) {
+                                          @RequestParam(required = false) String search,
+                                        HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (!rateLimiterService.isAllowed("get_all_notes", ip, rateLimiterService.getRelaxedBandwidth())) {
+            throw new TooManyAttemptsException("Too many attempts, try again later");
+        }
         return noteService.getAllNotes(id, search);
     }
 
