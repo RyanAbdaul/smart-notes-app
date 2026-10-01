@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.annotation.RateLimit;
 import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
@@ -32,11 +33,7 @@ public class NoteController {
             summary = "Create a new note",
             description = "Creates a new note with title and description. The note will be associated with the authenticated user."
     )
-    public NoteResponse createNote(@Valid @RequestBody NoteRequest request, HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("create_note", ip)) {
-            throw new RuntimeException("Too many note creation attempts, try again later");
-        }
+    public NoteResponse createNote(@Valid @RequestBody NoteRequest request) {
         return noteService.createNote(request);
     }
 
@@ -54,13 +51,9 @@ public class NoteController {
             summary = "Get all notes",
             description = "Retrieves a list of all notes belonging to the authenticated user. Can filter by note ID and search in title/description."
     )
+    @RateLimit(endpoint = "get_all_notes")
     public List<NoteResponse> getAllNotes(@RequestParam(required = false) UUID id,
-                                          @RequestParam(required = false) String search,
-                                        HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("get_all_notes", ip, rateLimiterService.getRelaxedBandwidth())) {
-            throw new TooManyAttemptsException("Too many attempts, try again later");
-        }
+                                          @RequestParam(required = false) String search) {
         return noteService.getAllNotes(id, search);
     }
 
@@ -92,10 +85,6 @@ public class NoteController {
             description = "Permanently deletes a note from the system. Only the note owner can delete it."
     )
     public void deleteNote(@PathVariable UUID id, HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("delete_note", ip)) {
-            throw new RuntimeException("Too many note deletion attempts, try again later");
-        }
         noteService.deleteNote(id);
     }
 
