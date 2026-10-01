@@ -33,6 +33,7 @@ public class NoteController {
             summary = "Create a new note",
             description = "Creates a new note with title and description. The note will be associated with the authenticated user."
     )
+    @RateLimit(endpoint = "create_note")
     public NoteResponse createNote(@Valid @RequestBody NoteRequest request) {
         return noteService.createNote(request);
     }
@@ -42,6 +43,7 @@ public class NoteController {
             summary = "Get note by ID",
             description = "Retrieves a single note by its unique identifier. Only returns the note if it belongs to the authenticated user."
     )
+    @RateLimit(endpoint = "get_note_by_id")
     public NoteResponse getNoteById(@PathVariable UUID id) {
         return noteService.getNoteById(id);
     }
@@ -62,6 +64,7 @@ public class NoteController {
             summary = "Update a note",
             description = "Updates an existing note's title and description. Only the note owner can update it."
     )
+    @RateLimit(endpoint = "update_note")
 
     public NoteResponse updateNote(
             @PathVariable UUID id,
@@ -74,12 +77,14 @@ public class NoteController {
             summary = "Pin a note",
             description = "Pin or unpin an existing note. Only the note owner can pin or unpin it."
     )
+    @RateLimit(endpoint = "pin_note")
     public void pinNote(@PathVariable UUID id) {
         noteService.pinNote(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RateLimit(endpoint = "delete_note")
     @Operation(
             summary = "Delete a note",
             description = "Permanently deletes a note from the system. Only the note owner can delete it."
@@ -93,6 +98,7 @@ public class NoteController {
             summary = "Count total notes",
             description = "Returns the total number of notes belonging to the authenticated user"
     )
+    @RateLimit(endpoint = "count_notes")
     public long countNotes() {
         return noteService.countNotes();
     }

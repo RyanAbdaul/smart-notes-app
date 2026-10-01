@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.annotation.RateLimit;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.NotebookRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
@@ -28,6 +29,7 @@ public class NotebookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @RateLimit(endpoint = "create_notebook")
     @Operation(
             summary = "Create a new notebook",
             description = "Creates a new notebook with name. The notebook will be associated with the authenticated user."
@@ -42,6 +44,7 @@ public class NotebookController {
             summary = "Create a note in a notebook",
             description = "Creates a new note assigned to a specific notebook. Only the notebook owner can add notes to it."
     )
+    @RateLimit(endpoint = "create_note_in_notebook")
     public NoteResponse createNoteInNotebook(
             @PathVariable UUID notebookId,
             @Valid @RequestBody NoteRequest request,
@@ -58,6 +61,7 @@ public class NotebookController {
             summary = "Get notebook by ID",
             description = "Retrieves a single notebook by its unique identifier. Only returns the notebook if it belongs to the authenticated user."
     )
+    @RateLimit(endpoint = "get_notebook_by_id")
     public NotebookResponse getNotebookById(@PathVariable UUID id) {
         return notebookService.getNotebookById(id);
     }
@@ -67,6 +71,7 @@ public class NotebookController {
             summary = "Get all notebooks",
             description = "Retrieves a list of all notebooks belonging to the authenticated user"
     )
+    @RateLimit(endpoint = "get_all_notebooks")
     public List<NotebookResponse> getAllNotebooks() {
         return notebookService.getAllNotebooks();
     }
@@ -76,6 +81,7 @@ public class NotebookController {
             summary = "Update a notebook",
             description = "Updates an existing notebook's name. Only the notebook owner can update it."
     )
+    @RateLimit(endpoint = "update_notebook")
     public NotebookResponse updateNotebook(
             @PathVariable UUID id,
             @Valid @RequestBody NotebookRequest request,
@@ -93,6 +99,7 @@ public class NotebookController {
             summary = "Delete a notebook",
             description = "Permanently deletes a notebook from the system. Only the notebook owner can delete it."
     )
+    @RateLimit(endpoint = "delete_notebook")
     public void deleteNotebook(@PathVariable UUID id, HttpServletRequest httpRequest) {
         String ip = httpRequest.getRemoteAddr();
         if (!rateLimiterService.isAllowed("delete_notebook", ip)) {
@@ -106,6 +113,7 @@ public class NotebookController {
             summary = "Count total notebooks",
             description = "Returns the total number of notebooks belonging to the authenticated user"
     )
+    @RateLimit(endpoint = "count_notebooks")
     public long countNotebooks() {
         return notebookService.countNotebooks();
     }
