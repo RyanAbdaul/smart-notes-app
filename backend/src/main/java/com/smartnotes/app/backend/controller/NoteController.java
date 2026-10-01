@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.annotation.RateLimit;
 import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
@@ -32,11 +33,8 @@ public class NoteController {
             summary = "Create a new note",
             description = "Creates a new note with title and description. The note will be associated with the authenticated user."
     )
-    public NoteResponse createNote(@Valid @RequestBody NoteRequest request, HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("create_note", ip)) {
-            throw new RuntimeException("Too many note creation attempts, try again later");
-        }
+    @RateLimit(endpoint = "create_note")
+    public NoteResponse createNote(@Valid @RequestBody NoteRequest request) {
         return noteService.createNote(request);
     }
 
@@ -45,6 +43,7 @@ public class NoteController {
             summary = "Get note by ID",
             description = "Retrieves a single note by its unique identifier. Only returns the note if it belongs to the authenticated user."
     )
+    @RateLimit(endpoint = "get_note_by_id")
     public NoteResponse getNoteById(@PathVariable UUID id) {
         return noteService.getNoteById(id);
     }
@@ -54,13 +53,9 @@ public class NoteController {
             summary = "Get all notes",
             description = "Retrieves a list of all notes belonging to the authenticated user. Can filter by note ID and search in title/description."
     )
+    @RateLimit(endpoint = "get_all_notes")
     public List<NoteResponse> getAllNotes(@RequestParam(required = false) UUID id,
-                                          @RequestParam(required = false) String search,
-                                        HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("get_all_notes", ip, rateLimiterService.getRelaxedBandwidth())) {
-            throw new TooManyAttemptsException("Too many attempts, try again later");
-        }
+                                          @RequestParam(required = false) String search) {
         return noteService.getAllNotes(id, search);
     }
 
@@ -69,6 +64,7 @@ public class NoteController {
             summary = "Update a note",
             description = "Updates an existing note's title and description. Only the note owner can update it."
     )
+    @RateLimit(endpoint = "update_note")
 
     public NoteResponse updateNote(
             @PathVariable UUID id,
@@ -81,21 +77,19 @@ public class NoteController {
             summary = "Pin a note",
             description = "Pin or unpin an existing note. Only the note owner can pin or unpin it."
     )
+    @RateLimit(endpoint = "pin_note")
     public void pinNote(@PathVariable UUID id) {
         noteService.pinNote(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RateLimit(endpoint = "delete_note")
     @Operation(
             summary = "Delete a note",
             description = "Permanently deletes a note from the system. Only the note owner can delete it."
     )
     public void deleteNote(@PathVariable UUID id, HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("delete_note", ip)) {
-            throw new RuntimeException("Too many note deletion attempts, try again later");
-        }
         noteService.deleteNote(id);
     }
 
@@ -104,6 +98,7 @@ public class NoteController {
             summary = "Count total notes",
             description = "Returns the total number of notes belonging to the authenticated user"
     )
+    @RateLimit(endpoint = "count_notes")
     public long countNotes() {
         return noteService.countNotes();
     }

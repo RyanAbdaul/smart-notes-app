@@ -1,5 +1,7 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.annotation.RateLimit;
+import com.smartnotes.app.backend.annotation.RateLimitType;
 import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.AuthenticationRequest;
 import com.smartnotes.app.backend.request.RegisterRequest;
@@ -30,12 +32,8 @@ public class AuthenticationController {
             summary = "Register a new user",
             description = "Creates a new user account with email, password, and personal information. First user gets ADMIN role, subsequent users get USER role."
     )
-
-    public void register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) throws Exception {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("register", ip)) {
-            throw new TooManyAttemptsException("Too many registration attempts, try again later");
-        }
+    @RateLimit(endpoint = "register", type = RateLimitType.STRICT)
+    public void register(@Valid @RequestBody RegisterRequest request) throws Exception {
         authenticationService.register(request);
     }
 
@@ -44,11 +42,8 @@ public class AuthenticationController {
             summary = "Login user",
             description = "Authenticates a user with email and password, returns a JWT token for subsequent API requests"
     )
-    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request, HttpServletRequest httpRequest) {
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimiterService.isAllowed("login", ip)) {
-            throw new TooManyAttemptsException("Too many login attempts, try again later");
-        }
+    @RateLimit(endpoint = "login", type = RateLimitType.STRICT)
+    public LoginResponse login(@Valid @RequestBody AuthenticationRequest request) {
         System.out.println("TEST");
         return authenticationService.login(request);
     }

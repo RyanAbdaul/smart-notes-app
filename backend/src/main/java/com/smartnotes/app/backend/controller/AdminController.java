@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.annotation.RateLimit;
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
 import com.smartnotes.app.backend.service.AdminService;
@@ -27,6 +28,7 @@ public class AdminController {
             summary = "Get all users",
             description = "Retrieves a list of all registered users (Admin only)"
     )
+    @RateLimit(endpoint = "get_all_users")
     public List<UserResponse> getAllUsers() {
         return adminService.getAllUsers();
     }
@@ -37,6 +39,7 @@ public class AdminController {
             summary = "Update user details",
             description = "Partially updates user details and info (firstName, lastName, email) (Admin only)"
     )
+    @RateLimit(endpoint = "update_user")
     public UserResponse updateUser(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest request) {
@@ -49,6 +52,7 @@ public class AdminController {
             summary = "Promote user to admin",
             description = "Promotes an existing user by granting the ROLE_ADMIN role (Admin only)"
     )
+    @RateLimit(endpoint = "promote_to_admin")
     public UserResponse promoteToAdmin(@PathVariable UUID id) {
         return adminService.promoteToAdmin(id);
     }
@@ -59,6 +63,7 @@ public class AdminController {
             summary = "Delete a user",
             description = "Deletes a user by ID. Admins cannot be deleted. (Admin only)"
     )
+    @RateLimit(endpoint = "delete_user")
     public void deleteUser(@PathVariable UUID id) {
         adminService.deleteUser(id);
     }

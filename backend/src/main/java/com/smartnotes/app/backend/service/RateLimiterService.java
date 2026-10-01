@@ -24,11 +24,11 @@ public class RateLimiterService {
 
     @Getter
     private final Bandwidth strictBandwidth =
-            Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
+            Bandwidth.classic(5, Refill.intervally(5, Duration.ofMinutes(10)));
 
     @Getter
     private final Bandwidth relaxedBandwidth =
-            Bandwidth.classic(60, Refill.greedy(60, Duration.ofMinutes(10)));
+            Bandwidth.classic(30, Refill.greedy(1, Duration.ofMinutes(1)));
 
     public boolean isAllowed(String endpoint, String ipAddress) {
         return isAllowed(endpoint, ipAddress, strictBandwidth);
