@@ -73,14 +73,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private List<Authority> initialAuthority() {
-        boolean isFirstUser = userRepository.count() == 0;
         List<Authority> authorities = new ArrayList<>();
-
         authorities.add(new Authority(Role.ROLE_USER.name()));
-        if (isFirstUser) {
-            authorities.add(new Authority(Role.ROLE_ADMIN.name()));
-        }
-
         return authorities;
     }
 }

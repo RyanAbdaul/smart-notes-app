@@ -1,5 +1,6 @@
 package com.smartnotes.app.backend.controller;
 
+import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
 import com.smartnotes.app.backend.controller.AdminController;
@@ -27,6 +28,36 @@ class AdminControllerTests {
 
     @InjectMocks
     private AdminController adminController;
+
+    // ==================== createAdmin Endpoint ====================
+
+    @Test
+    void AdminController_CreateAdmin_AdminIsCreatedSuccessfully() {
+        // Arrange
+        RegisterRequest request = new RegisterRequest("Admin", "User", "admin@example.com", "password123");
+        UUID adminId = UUID.randomUUID();
+        UserResponse expectedResponse = new UserResponse(
+                adminId,
+                "Admin",
+                "User",
+                "admin@example.com",
+                List.of("ROLE_USER", "ROLE_ADMIN"),
+                null,
+                null
+        );
+
+        when(adminService.createAdmin(request)).thenReturn(expectedResponse);
+
+        // Act
+        UserResponse actualResponse = adminController.createAdmin(request);
+
+        // Assert
+        Assertions.assertThat(actualResponse).isNotNull();
+        Assertions.assertThat(actualResponse.getId()).isEqualTo(adminId);
+        Assertions.assertThat(actualResponse.getEmail()).isEqualTo("admin@example.com");
+        Assertions.assertThat(actualResponse.getAuthorities()).contains("ROLE_ADMIN");
+        verify(adminService).createAdmin(request);
+    }
 
     // ==================== getAllUsers Endpoint ====================
 

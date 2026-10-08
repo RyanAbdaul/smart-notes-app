@@ -141,6 +141,62 @@ class NoteRepositoryTests {
     }
     
     @Test
+    void NoteRepository_FindNotes_ByOwnerId_ReturnsOnlyUserNotes() {
+        // Arrange
+        User anotherUser = new User();
+        anotherUser.setFirstName("Other");
+        anotherUser.setLastName("User");
+        anotherUser.setEmail("other@example.com");
+        anotherUser.setPassword("password");
+        userRepository.save(anotherUser);
+
+        Note userNote = buildNote("My Note", "My Description");
+        noteRepository.save(userNote);
+
+        Note otherNote = new Note();
+        otherNote.setTitle("Other Note");
+        otherNote.setDescription("Other Description");
+        otherNote.setOwner(anotherUser);
+        otherNote.setPinned(false);
+        noteRepository.save(otherNote);
+
+        // Act
+        List<Note> results = noteRepository.findNotes(owner.getId(), null, null);
+
+        // Assert
+        Assertions.assertEquals(1, results.size());
+        Assertions.assertEquals("My Note", results.get(0).getTitle());
+    }
+
+    @Test
+    void NoteRepository_FindNotes_WithSearchFilter_ReturnsMatchingNotes() {
+        // Arrange
+        noteRepository.save(buildNote("Grocery list", "Milk, eggs, bread"));
+        noteRepository.save(buildNote("Project ideas", "Build a notes app"));
+
+        // Act
+        List<Note> results = noteRepository.findNotes(owner.getId(), null, "eggs");
+
+        // Assert
+        Assertions.assertEquals(1, results.size());
+        Assertions.assertEquals("Grocery list", results.get(0).getTitle());
+    }
+
+    @Test
+    void NoteRepository_FindNotes_WithIdFilter_ReturnsSingleNote() {
+        // Arrange
+        Note note1 = noteRepository.save(buildNote("First Note", "Desc 1"));
+        noteRepository.save(buildNote("Second Note", "Desc 2"));
+
+        // Act
+        List<Note> results = noteRepository.findNotes(owner.getId(), note1.getId(), null);
+
+        // Assert
+        Assertions.assertEquals(1, results.size());
+        Assertions.assertEquals("First Note", results.get(0).getTitle());
+    }
+
+    @Test
     void NoteRepository_ExistsById_NoteExists_ReturnsTrue() {
         Note note = buildNote("Title", "Description");
         Note savedNote = noteRepository.save(note);

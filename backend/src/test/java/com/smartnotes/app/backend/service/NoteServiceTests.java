@@ -9,6 +9,7 @@ import com.smartnotes.app.backend.repository.NoteRepository;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
+import com.smartnotes.app.backend.util.DebuggingTools;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,9 @@ class NoteServiceTests {
 
     @Mock
     private NoteRepository noteRepository;
+
+    @Mock
+    private DebuggingTools debuggingTools;
 
     @InjectMocks
     private NoteService noteService;

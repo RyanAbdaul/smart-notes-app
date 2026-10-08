@@ -30,7 +30,7 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Register a new user",
-            description = "Creates a new user account with email, password, and personal information. First user gets ADMIN role, subsequent users get USER role."
+            description = "Creates a new user account with email, password, and personal information with USER role."
     )
     @RateLimit(endpoint = "register", type = RateLimitType.STRICT)
     public void register(@Valid @RequestBody RegisterRequest request) throws Exception {

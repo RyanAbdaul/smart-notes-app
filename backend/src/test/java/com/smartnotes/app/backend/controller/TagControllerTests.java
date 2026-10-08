@@ -3,7 +3,9 @@ package com.smartnotes.app.backend.controller;
 import com.smartnotes.app.backend.request.TagRequest;
 import com.smartnotes.app.backend.response.TagResponse;
 import com.smartnotes.app.backend.controller.TagController;
+import com.smartnotes.app.backend.service.RateLimiterService;
 import com.smartnotes.app.backend.service.TagService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,32 +27,53 @@ class TagControllerTests {
     @Mock
     private TagService tagService;
 
+    @Mock
+    private RateLimiterService rateLimiterService;
+
+    @Mock
+    private HttpServletRequest httpRequest;
+
     @InjectMocks
     private TagController tagController;
 
     // ==================== create Endpoint ====================
-//
-//    @Test
-//    void TagController_Create_TagIsCreatedSuccessfully() {
-//        // Arrange
-//        TagRequest request = new TagRequest("finance");
-//
-//        UUID tagId = UUID.randomUUID();
-//        TagResponse expectedResponse = new TagResponse();
-//        expectedResponse.setId(tagId);
-//        expectedResponse.setName("finance");
-//
-//        when(tagService.create(request)).thenReturn(expectedResponse);
-//
-//        // Act
-//        TagResponse actualResponse = tagController.create(request);
-//
-//        // Assert
-//        Assertions.assertThat(actualResponse).isNotNull();
-//        Assertions.assertThat(actualResponse.getId()).isEqualTo(tagId);
-//        Assertions.assertThat(actualResponse.getName()).isEqualTo("finance");
-//        verify(tagService).create(request);
-//    }
+
+    @Test
+    void TagController_Create_TagIsCreatedSuccessfully() {
+        // Arrange
+        TagRequest request = new TagRequest("finance");
+
+        UUID tagId = UUID.randomUUID();
+        TagResponse expectedResponse = new TagResponse();
+        expectedResponse.setId(tagId);
+        expectedResponse.setName("finance");
+
+        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(rateLimiterService.isAllowed("create_tag", "127.0.0.1")).thenReturn(true);
+        when(tagService.create(request)).thenReturn(expectedResponse);
+
+        // Act
+        TagResponse actualResponse = tagController.create(request, httpRequest);
+
+        // Assert
+        Assertions.assertThat(actualResponse).isNotNull();
+        Assertions.assertThat(actualResponse.getId()).isEqualTo(tagId);
+        Assertions.assertThat(actualResponse.getName()).isEqualTo("finance");
+        verify(tagService).create(request);
+    }
+
+    @Test
+    void TagController_Create_RateLimitExceeded_ThrowsRuntimeException() {
+        // Arrange
+        TagRequest request = new TagRequest("finance");
+        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(rateLimiterService.isAllowed("create_tag", "127.0.0.1")).thenReturn(false);
+
+        // Act & Assert
+        Assertions.assertThatThrownBy(() -> tagController.create(request, httpRequest))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Too many tag creation attempts");
+    }
 
     // ==================== getAll Endpoint ====================
 

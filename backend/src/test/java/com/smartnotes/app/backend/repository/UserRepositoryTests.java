@@ -140,13 +140,14 @@ class UserRepositoryTests {
     @Test
     void UserRepository_CountByAuthority_RoleExists_ReturnsCount() {
         // Arrange
-        // First user will have both ROLE_USER and ROLE_ADMIN
-        RegisterRequest request1 = buildRegisterRequest("Admin", "User", "admin@example.com", "password");
-        userRepository.save(buildNewUser(request1));
+        // User with ROLE_USER and ROLE_ADMIN
+        User user1 = buildNewUser(buildRegisterRequest("Admin", "User", "admin@example.com", "password"));
+        user1.setAuthorities(List.of(new Authority(Role.ROLE_USER.name()), new Authority(Role.ROLE_ADMIN.name())));
+        userRepository.save(user1);
 
-        // Second user will have only ROLE_USER
-        RegisterRequest request2 = buildRegisterRequest("Regular", "User", "user@example.com", "password");
-        userRepository.save(buildNewUser(request2));
+        // User with only ROLE_USER
+        User user2 = buildNewUser(buildRegisterRequest("Regular", "User", "user@example.com", "password"));
+        userRepository.save(user2);
 
         // Act
         long userCount = userRepository.countByAuthority(Role.ROLE_USER.name());
@@ -214,14 +215,8 @@ class UserRepositoryTests {
     }
 
     private List<Authority> initialAuthority() {
-        boolean isFirstUser = userRepository.count() == 0;
         List<Authority> authorities = new ArrayList<>();
-
         authorities.add(new Authority(Role.ROLE_USER.name()));
-        if (isFirstUser) {
-            authorities.add(new Authority(Role.ROLE_ADMIN.name()));
-        }
-
         return authorities;
     }
 }

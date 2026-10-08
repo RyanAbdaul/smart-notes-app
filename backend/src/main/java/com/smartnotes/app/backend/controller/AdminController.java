@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.annotation.RateLimit;
+import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
 import com.smartnotes.app.backend.service.AdminService;
@@ -21,6 +22,17 @@ import java.util.UUID;
 public class AdminController {
 
     private final AdminService adminService;
+
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Create an admin user",
+            description = "Creates a new user with ROLE_ADMIN and ROLE_USER roles (Admin only)"
+    )
+    @RateLimit(endpoint = "create_admin")
+    public UserResponse createAdmin(@Valid @RequestBody RegisterRequest request) {
+        return adminService.createAdmin(request);
+    }
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)

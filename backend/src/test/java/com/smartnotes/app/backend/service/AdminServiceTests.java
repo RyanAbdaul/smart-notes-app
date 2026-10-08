@@ -6,6 +6,7 @@ import com.smartnotes.app.backend.exception.AdminDeletionException;
 import com.smartnotes.app.backend.exception.EmailAlreadyExistsException;
 import com.smartnotes.app.backend.exception.UserNotFoundException;
 import com.smartnotes.app.backend.repository.UserRepository;
+import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
 import org.assertj.core.api.Assertions;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,9 @@ class AdminServiceTests {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AdminService adminService;
@@ -46,6 +51,47 @@ class AdminServiceTests {
         testUser.setEmail("alice@example.com");
         testUser.setPassword("encodedPassword");
         testUser.setAuthorities(new ArrayList<>(List.of(new Authority("ROLE_USER"))));
+    }
+
+    // ==================== createAdmin ====================
+
+    @Test
+    void AdminService_CreateAdmin_AdminIsCreatedSuccessfully() {
+        // Arrange
+        RegisterRequest request = new RegisterRequest("Admin", "User", "admin@example.com", "password123");
+        when(userRepository.findUserByEmail("admin@example.com")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
+        when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> {
+            User u = invocation.getArgument(0);
+            u.setId(UUID.randomUUID());
+            return u;
+        });
+
+        // Act
+        UserResponse response = adminService.createAdmin(request);
+
+        // Assert
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getFirstName()).isEqualTo("Admin");
+        Assertions.assertThat(response.getLastName()).isEqualTo("User");
+        Assertions.assertThat(response.getEmail()).isEqualTo("admin@example.com");
+        Assertions.assertThat(response.getAuthorities()).containsExactlyInAnyOrder("ROLE_USER", "ROLE_ADMIN");
+        Mockito.verify(userRepository).findUserByEmail("admin@example.com");
+        Mockito.verify(passwordEncoder).encode("password123");
+        Mockito.verify(userRepository).save(Mockito.any(User.class));
+    }
+
+    @Test
+    void AdminService_CreateAdmin_EmailAlreadyExists_ThrowsEmailAlreadyExistsException() {
+        // Arrange
+        RegisterRequest request = new RegisterRequest("Admin", "User", "admin@example.com", "password123");
+        when(userRepository.findUserByEmail("admin@example.com")).thenReturn(Optional.of(testUser));
+
+        // Act & Assert
+        Assertions.assertThatThrownBy(() -> adminService.createAdmin(request))
+                .isInstanceOf(EmailAlreadyExistsException.class)
+                .hasMessageContaining("Email is already taken");
+        Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
     }
 
     // ==================== getAllUsers ====================

@@ -1,14 +1,17 @@
 package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Authority;
+import com.smartnotes.app.backend.entity.Role;
 import com.smartnotes.app.backend.entity.User;
 import com.smartnotes.app.backend.exception.AdminDeletionException;
 import com.smartnotes.app.backend.exception.EmailAlreadyExistsException;
 import com.smartnotes.app.backend.exception.UserNotFoundException;
 import com.smartnotes.app.backend.repository.UserRepository;
+import com.smartnotes.app.backend.request.RegisterRequest;
 import com.smartnotes.app.backend.request.UpdateUserRequest;
 import com.smartnotes.app.backend.response.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +25,27 @@ import java.util.stream.StreamSupport;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserResponse createAdmin(RegisterRequest request) {
+        if (userRepository.findUserByEmail(request.getEmail()).isPresent()) {
+            throw new EmailAlreadyExistsException("Email is already taken");
+        }
+
+        User user = new User();
+        user.setFirstName(request.getFirstName().trim());
+        user.setLastName(request.getLastName().trim());
+        user.setEmail(request.getEmail().trim());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(new Authority(Role.ROLE_USER.name()));
+        authorities.add(new Authority(Role.ROLE_ADMIN.name()));
+        user.setAuthorities(authorities);
+
+        User savedUser = userRepository.save(user);
+        return mapToResponse(savedUser);
+    }
 
     public List<UserResponse> getAllUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(), false)

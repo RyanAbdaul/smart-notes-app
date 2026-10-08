@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.smartnotes.app.backend.repository.Owned;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Notebook {
+public class Notebook implements Owned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
