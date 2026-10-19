@@ -1,0 +1,1 @@
+ALTER TABLE tags DROP IF EXISTS owner_id;

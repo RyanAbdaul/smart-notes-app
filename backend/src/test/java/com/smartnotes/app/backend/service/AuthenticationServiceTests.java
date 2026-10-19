@@ -45,10 +45,14 @@ class AuthenticationServiceTests {
     @Mock
     private JwtService jwtService;
 
+
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
+
     private RegisterRequest registerRequest;
+
+
     private AuthenticationRequest authRequest;
 
     @BeforeEach
@@ -65,10 +69,9 @@ class AuthenticationServiceTests {
     // ==================== register ====================
 
     @Test
-    void AuthenticationService_Register_FirstUser_SavedWithUserAndAdminRoles() {
+    void AuthenticationService_Register_FirstUser_SavedWithUserRoleOnly() {
         // Arrange
         when(userRepository.findUserByEmail("john.doe@example.com")).thenReturn(Optional.empty());
-        when(userRepository.count()).thenReturn(0L);
         when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
 
         // Act
@@ -85,14 +88,13 @@ class AuthenticationServiceTests {
         Assertions.assertThat(savedUser.getPassword()).isEqualTo("encodedPassword");
         Assertions.assertThat(savedUser.getAuthorities())
                 .extracting(auth -> ((Authority) auth).getAuthority())
-                .containsExactlyInAnyOrder(Role.ROLE_USER.name(), Role.ROLE_ADMIN.name());
+                .containsExactly(Role.ROLE_USER.name());
     }
 
     @Test
     void AuthenticationService_Register_SubsequentUser_SavedWithUserRoleOnly() {
         // Arrange
         when(userRepository.findUserByEmail("john.doe@example.com")).thenReturn(Optional.empty());
-        when(userRepository.count()).thenReturn(1L);
         when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
 
         // Act

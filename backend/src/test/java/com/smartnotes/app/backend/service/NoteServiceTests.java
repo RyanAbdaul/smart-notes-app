@@ -1,11 +1,14 @@
 package com.smartnotes.app.backend.service;
 
 import com.smartnotes.app.backend.entity.Note;
+import com.smartnotes.app.backend.entity.Tag;
 import com.smartnotes.app.backend.entity.User;
 import com.smartnotes.app.backend.exception.NoteNotFoundException;
-import com.smartnotes.app.backend.exception.UnauthorizedNoteAccessException;
+import com.smartnotes.app.backend.exception.UnauthorizedTagAccessException;
 import com.smartnotes.app.backend.exception.UserNotAuthenticatedException;
 import com.smartnotes.app.backend.repository.NoteRepository;
+import com.smartnotes.app.backend.repository.NotebookRepository;
+import com.smartnotes.app.backend.repository.TagRepository;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
 import com.smartnotes.app.backend.response.NoteResponse;
@@ -34,6 +37,12 @@ class NoteServiceTests {
 
     @Mock
     private NoteRepository noteRepository;
+
+    @Mock
+    private TagRepository tagRepository;
+
+    @Mock
+    private NotebookRepository notebookRepository;
 
     @InjectMocks
     private NoteService noteService;
@@ -150,27 +159,6 @@ class NoteServiceTests {
         // Act & Assert
         Assertions.assertThatThrownBy(() -> noteService.getNoteById(noteId))
                 .isInstanceOf(NoteNotFoundException.class);
-        Mockito.verify(noteRepository).findById(noteId);
-    }
-
-    @Test
-    void NoteService_GetNoteById_UnauthorizedAccess_ThrowsUnauthorizedNoteAccessException() {
-        // Arrange
-        mockAuthenticatedUser(user);
-
-        User anotherUser = new User();
-        anotherUser.setId(UUID.randomUUID());
-
-        UUID noteId = UUID.randomUUID();
-        Note note = new Note();
-        note.setId(noteId);
-        note.setOwner(anotherUser);
-
-        when(noteRepository.findById(noteId)).thenReturn(Optional.of(note));
-
-        // Act & Assert
-        Assertions.assertThatThrownBy(() -> noteService.getNoteById(noteId))
-                .isInstanceOf(UnauthorizedNoteAccessException.class);
         Mockito.verify(noteRepository).findById(noteId);
     }
 
@@ -293,30 +281,6 @@ class NoteServiceTests {
     }
 
     @Test
-    void NoteService_UpdateNote_UnauthorizedAccess_ThrowsUnauthorizedNoteAccessException() {
-        // Arrange
-        mockAuthenticatedUser(user);
-
-        User anotherUser = new User();
-        anotherUser.setId(UUID.randomUUID());
-
-        UUID noteId = UUID.randomUUID();
-        Note note = new Note();
-        note.setId(noteId);
-        note.setOwner(anotherUser);
-
-        UpdateNoteRequest request = new UpdateNoteRequest();
-
-        when(noteRepository.findById(noteId)).thenReturn(Optional.of(note));
-
-        // Act & Assert
-        Assertions.assertThatThrownBy(() -> noteService.updateNote(noteId, request))
-                .isInstanceOf(UnauthorizedNoteAccessException.class);
-        Mockito.verify(noteRepository).findById(noteId);
-        Mockito.verify(noteRepository, Mockito.never()).save(Mockito.any());
-    }
-
-    @Test
     void NoteService_UpdateNote_UserNotAuthenticated_ThrowsUserNotAuthenticatedException() {
         // Arrange
         SecurityContextHolder.clearContext();
@@ -362,28 +326,6 @@ class NoteServiceTests {
         // Act & Assert
         Assertions.assertThatThrownBy(() -> noteService.deleteNote(noteId))
                 .isInstanceOf(NoteNotFoundException.class);
-        Mockito.verify(noteRepository).findById(noteId);
-        Mockito.verify(noteRepository, Mockito.never()).delete(Mockito.any());
-    }
-
-    @Test
-    void NoteService_DeleteNote_UnauthorizedAccess_ThrowsUnauthorizedNoteAccessException() {
-        // Arrange
-        mockAuthenticatedUser(user);
-
-        User anotherUser = new User();
-        anotherUser.setId(UUID.randomUUID());
-
-        UUID noteId = UUID.randomUUID();
-        Note note = new Note();
-        note.setId(noteId);
-        note.setOwner(anotherUser);
-
-        when(noteRepository.findById(noteId)).thenReturn(Optional.of(note));
-
-        // Act & Assert
-        Assertions.assertThatThrownBy(() -> noteService.deleteNote(noteId))
-                .isInstanceOf(UnauthorizedNoteAccessException.class);
         Mockito.verify(noteRepository).findById(noteId);
         Mockito.verify(noteRepository, Mockito.never()).delete(Mockito.any());
     }
@@ -499,28 +441,6 @@ class NoteServiceTests {
         // Act & Assert
         Assertions.assertThatThrownBy(() -> noteService.pinNote(noteId))
                 .isInstanceOf(NoteNotFoundException.class);
-        Mockito.verify(noteRepository).findById(noteId);
-        Mockito.verify(noteRepository, Mockito.never()).save(Mockito.any());
-    }
-
-    @Test
-    void NoteService_PinNote_UnauthorizedAccess_ThrowsUnauthorizedNoteAccessException() {
-        // Arrange
-        mockAuthenticatedUser(user);
-
-        User anotherUser = new User();
-        anotherUser.setId(UUID.randomUUID());
-
-        UUID noteId = UUID.randomUUID();
-        Note note = new Note();
-        note.setId(noteId);
-        note.setOwner(anotherUser);
-
-        when(noteRepository.findById(noteId)).thenReturn(Optional.of(note));
-
-        // Act & Assert
-        Assertions.assertThatThrownBy(() -> noteService.pinNote(noteId))
-                .isInstanceOf(UnauthorizedNoteAccessException.class);
         Mockito.verify(noteRepository).findById(noteId);
         Mockito.verify(noteRepository, Mockito.never()).save(Mockito.any());
     }

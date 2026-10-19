@@ -19,4 +19,8 @@ public interface NoteRepository extends JpaRepository<Note, UUID> {
     List<Note> findNotes(@Param("ownerId") UUID ownerId,
                           @Param("id") UUID id,
                           @Param("search") String search);
+
+    long countByOwnerId(UUID ownerId);
+
+    List<Note> findDistinctByTagsNameIgnoreCase(String name);
 }

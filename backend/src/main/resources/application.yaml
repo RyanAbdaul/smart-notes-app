@@ -29,8 +29,8 @@ spring:
 
 rate-limiter:
   redis:
-    host: ${RATE_LIMITER_REDIS_HOST:localhost}
-    port: ${RATE_LIMITER_REDIS_PORT:6380}
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
 
 server:
   port: 8080

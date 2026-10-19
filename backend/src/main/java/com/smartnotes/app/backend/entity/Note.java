@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.smartnotes.app.backend.repository.Owned;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Note {
+public class Note implements Owned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,14 +42,13 @@ public class Note {
     @JoinColumn(name = "notebook_id")
     private Notebook notebook;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "note_tags",
             joinColumns = @JoinColumn(name = "note_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     private String imageUrl;
 

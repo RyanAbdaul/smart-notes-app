@@ -17,6 +17,9 @@ spring:
   flyway:
     enabled: false
 
+  cache:
+    type: none
+
   main:
     banner-mode: off
     log-startup-info: false

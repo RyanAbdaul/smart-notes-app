@@ -1,0 +1,1 @@
+ALTER TABLE notes DROP IF EXISTS owner_id;

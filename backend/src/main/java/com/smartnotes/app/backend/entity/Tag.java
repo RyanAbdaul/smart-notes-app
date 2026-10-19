@@ -2,6 +2,7 @@ package com.smartnotes.app.backend.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.smartnotes.app.backend.repository.Owned;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tags")
-public class Tag {
+public class Tag implements Owned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,6 +29,10 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.EAGER)
-    private List<Note> notes;
+    private List<Note> notes = new ArrayList<>();
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 }
