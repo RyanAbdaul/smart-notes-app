@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,14 +42,13 @@ public class Note implements Owned {
     @JoinColumn(name = "notebook_id")
     private Notebook notebook;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "note_tags",
             joinColumns = @JoinColumn(name = "note_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     private String imageUrl;
 

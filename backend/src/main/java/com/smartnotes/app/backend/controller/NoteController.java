@@ -1,6 +1,7 @@
 package com.smartnotes.app.backend.controller;
 
 import com.smartnotes.app.backend.annotation.RateLimit;
+import com.smartnotes.app.backend.entity.Note;
 import com.smartnotes.app.backend.exception.TooManyAttemptsException;
 import com.smartnotes.app.backend.request.NoteRequest;
 import com.smartnotes.app.backend.request.UpdateNoteRequest;
@@ -56,6 +57,7 @@ public class NoteController {
     @RateLimit(endpoint = "get_all_notes")
     public List<NoteResponse> getAllNotes(@RequestParam(required = false) UUID id,
                                           @RequestParam(required = false) String search) {
+
         return noteService.getAllNotes(id, search);
     }
 
@@ -93,6 +95,31 @@ public class NoteController {
         noteService.deleteNote(id);
     }
 
+
+    @PostMapping("/{noteId}/link/tags/{tagId}")
+    @RateLimit(endpoint = "link_tag_note")
+    @Operation(
+            summary = "Link Note to Tag",
+            description = "Link Note to Tag"
+    )
+    @ResponseStatus(HttpStatus.CREATED)
+    public void linkNoteToTag(@PathVariable UUID noteId, @PathVariable UUID tagId){
+        noteService.linkNoteToTag(tagId, noteId);
+
+    }
+
+    @PostMapping("/{noteId}/link/notebooks/{notebookId}")
+    @RateLimit(endpoint = "link_tag_note")
+    @Operation(
+            summary = "Link Note to Tag",
+            description = "Link Note to Tag"
+    )
+    @ResponseStatus(HttpStatus.CREATED)
+    public void linkNoteToNotebook(@PathVariable UUID noteId, @PathVariable UUID notebookId){
+        noteService.linkNoteToNotebook(notebookId, noteId);
+
+    }
+
     @GetMapping("/count")
     @Operation(
             summary = "Count total notes",
@@ -101,6 +128,10 @@ public class NoteController {
     @RateLimit(endpoint = "count_notes")
     public long countNotes() {
         return noteService.countNotes();
+    }
+    @GetMapping("/tags/{tagName}")
+    public List<NoteResponse> getNotesByTagsName(@PathVariable String tagName){
+        return noteService.getNotesByTagsName(tagName);
     }
 
 

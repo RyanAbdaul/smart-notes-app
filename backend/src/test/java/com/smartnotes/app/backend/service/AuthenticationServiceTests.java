@@ -45,10 +45,14 @@ class AuthenticationServiceTests {
     @Mock
     private JwtService jwtService;
 
+
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
+
     private RegisterRequest registerRequest;
+
+
     private AuthenticationRequest authRequest;
 
     @BeforeEach

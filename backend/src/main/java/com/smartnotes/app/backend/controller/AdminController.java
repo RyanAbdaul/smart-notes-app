@@ -48,7 +48,7 @@ public class AdminController {
     @PatchMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-            summary = "Update user details",
+            summary = "Update user detaiwls",
             description = "Partially updates user details and info (firstName, lastName, email) (Admin only)"
     )
     @RateLimit(endpoint = "update_user")

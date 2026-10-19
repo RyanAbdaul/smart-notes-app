@@ -44,7 +44,6 @@ public class AuthenticationController {
     )
     @RateLimit(endpoint = "login", type = RateLimitType.STRICT)
     public LoginResponse login(@Valid @RequestBody AuthenticationRequest request) {
-        System.out.println("TEST");
         return authenticationService.login(request);
     }
 }

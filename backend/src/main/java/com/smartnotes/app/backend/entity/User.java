@@ -55,6 +55,9 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"))
     private List<Authority> authorities;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tag> tags;
+
     @JsonIgnore
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes;
